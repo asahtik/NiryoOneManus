@@ -1,5 +1,5 @@
-# cmake_minimum_required(VERSION 2.8.3)
-# project(niryo_one_driver)
+cmake_minimum_required(VERSION 3.0.0)
+project(niryo_one_driver VERSION 0.1.0)
 
 set(DYNAMIXEL_SDK_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/dynamixel_sdk)
 set(MCP_CAN_RPI_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/mcp_can_rpi)
@@ -60,7 +60,7 @@ add_library(niryo_one_driver
   ${DYNAMIXEL_SDK_DIR}/include/dynamixel_sdk/dynamixel_sdk.h
 )
 target_include_directories(niryo_one_driver PRIVATE ${CMAKE_CURRENT_LIST_DIR}/include)
-target_include_directories(niryo_one_driver PRIVATE ${DYNAMIXEL_SDK_DIR}/include ${MCP_CAN_RPI_DIR}/include ${REPLACEMENTS})
+target_include_directories(niryo_one_driver PUBLIC ${DYNAMIXEL_SDK_DIR}/include ${MCP_CAN_RPI_DIR}/include ${REPLACEMENTS})
 
 add_dependencies(niryo_one_driver dynamixel_sdk mcp_can_rpi)
 
