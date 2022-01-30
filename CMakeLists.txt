@@ -1,0 +1,12 @@
+cmake_minimum_required(VERSION 3.0.0)
+project(NiryoOneManus VERSION 0.1.0)
+
+set(CMAKE_CXX_STANDARD 20)
+
+set(CPACK_PROJECT_NAME ${PROJECT_NAME})
+set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
+include(CPack)
+
+include(src/dynamixel_sdk/CMakeLists.txt)
+include(src/mcp_can_rpi/CMakeLists.txt)
+include(src/niryo_one_driver/CMakeLists.txt)
