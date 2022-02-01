@@ -34,5 +34,7 @@ void controlLoop()
 
 int main(int argc, char** argv) {
     mi = new NiryoOneManusInterface();
+    mi->comm->activateLearningMode(true);
+
     controlLoop();
 }
