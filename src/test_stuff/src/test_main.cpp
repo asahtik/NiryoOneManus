@@ -5,11 +5,6 @@
 
 NiryoOneManusInterface* mi;
 
-int main(int argc, char** argv) {
-    mi = new NiryoOneManusInterface();
-    controlLoop();
-}
-
 void controlLoop() 
     {
         auto last_time = repl::time_now();
@@ -27,3 +22,8 @@ void controlLoop()
 
         }
     }
+
+int main(int argc, char** argv) {
+    mi = new NiryoOneManusInterface();
+    controlLoop();
+}
