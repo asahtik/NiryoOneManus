@@ -48,6 +48,8 @@ set(HEADERS
   ${CMAKE_CURRENT_LIST_DIR}/include/niryo_one_driver/xl430_driver.h
 )
 
+find_package(Threads REQUIRED)
+
 add_library(niryo_one_driver
   ${SOURCES_COMM}
   ${SOURCES_DRIVER}
@@ -59,8 +61,9 @@ add_library(niryo_one_driver
   ${MCP_CAN_RPI_DIR}/include/mcp_can_rpi/mcp_can_rpi.h
   ${DYNAMIXEL_SDK_DIR}/include/dynamixel_sdk/dynamixel_sdk.h
 )
+target_link_libraries(niryo_one_driver dynamixel_sdk mcp_can_rpi Threads::Threads)
 target_include_directories(niryo_one_driver PRIVATE ${CMAKE_CURRENT_LIST_DIR}/include)
-target_include_directories(niryo_one_driver PUBLIC ${DYNAMIXEL_SDK_DIR}/include ${MCP_CAN_RPI_DIR}/include ${REPLACEMENTS})
+target_include_directories(niryo_one_driver PUBLIC dynamixel_sdk mcp_can_rpi ${REPLACEMENTS})
 
 add_dependencies(niryo_one_driver dynamixel_sdk mcp_can_rpi)
 

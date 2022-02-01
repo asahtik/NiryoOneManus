@@ -23,7 +23,7 @@ add_library(mcp_can_rpi
   ${HEADERS}
   ${REPLACEMENTS}/ros_replacements/status_output.hpp
 )
-target_include_directories(mcp_can_rpi PRIVATE ${CMAKE_CURRENT_LIST_DIR}/include ${REPLACEMENTS})
+target_include_directories(mcp_can_rpi PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include ${REPLACEMENTS})
 
 EXECUTE_PROCESS( COMMAND uname -m COMMAND tr -d '\n' OUTPUT_VARIABLE ARCHITECTURE )
 message( STATUS "Architecture: ${ARCHITECTURE}" )

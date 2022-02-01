@@ -43,7 +43,7 @@ add_library(dynamixel_sdk
   ${REPLACEMENTS}/ros_replacements/status_output.hpp
 )
 
-target_include_directories(dynamixel_sdk PRIVATE ${CMAKE_CURRENT_LIST_DIR}/include ${REPLACEMENTS})
+target_include_directories(dynamixel_sdk PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include ${REPLACEMENTS})
 # add_dependencies(dynamixel_sdk ${${PROJECT_NAME}_EXPORTED_TARGETS})
 
 EXECUTE_PROCESS( COMMAND uname -m COMMAND tr -d '\n' OUTPUT_VARIABLE ARCHITECTURE )
