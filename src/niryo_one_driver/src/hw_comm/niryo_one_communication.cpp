@@ -110,7 +110,6 @@ void NiryoOneCommunication::manageCanConnectionLoop()
     repl::Rate rate(niryo_one_hw_check_connection_frequency);
     while (ok) {
         if (!canComm->isConnectionOk() || new_calibration_requested) {
-            std::cout << "CALIBRATION" << std::endl;
             new_calibration_requested = false;
             OUTPUT_WARNING("Stop Can hw control");
             canComm->stopHardwareControlLoop();
