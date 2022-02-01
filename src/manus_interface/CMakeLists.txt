@@ -20,6 +20,6 @@ add_library(manus_interface
 
 target_link_libraries(manus_interface niryo_one_driver)
 
-target_include_directories(manus_interface PRIVATE ${CMAKE_CURRENT_LIST_DIR}/include ${REPLACEMENTS} ${DRIVER_DIR}/include niryo_one_driver)
+target_include_directories(manus_interface PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include ${REPLACEMENTS} ${DRIVER_DIR}/include niryo_one_driver)
 
 add_dependencies(manus_interface niryo_one_driver)

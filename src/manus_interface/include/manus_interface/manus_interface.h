@@ -10,5 +10,5 @@ public:
     double pos[6];
     double vel[6];
 
-    std::shared_ptr<CommunicationBase> comm;
+    std::shared_ptr<NiryoOneCommunication> comm;
 };
