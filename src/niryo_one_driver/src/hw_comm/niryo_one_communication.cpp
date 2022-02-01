@@ -20,6 +20,8 @@
 #include "niryo_one_driver/niryo_one_communication.h"
 #include "ros_replacements/status_output.hpp"
 
+#include <iostream>
+
 NiryoOneCommunication::NiryoOneCommunication(int hardware_version)
 {
     this->hardware_version = hardware_version;
@@ -108,6 +110,7 @@ void NiryoOneCommunication::manageCanConnectionLoop()
     repl::Rate rate(niryo_one_hw_check_connection_frequency);
     while (ok) {
         if (!canComm->isConnectionOk() || new_calibration_requested) {
+            std::cout << "CALIBRATION" << std::endl;
             new_calibration_requested = false;
             OUTPUT_WARNING("Stop Can hw control");
             canComm->stopHardwareControlLoop();
