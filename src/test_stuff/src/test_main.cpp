@@ -17,6 +17,15 @@ void controlLoop()
 
         std::cout << mi->pos[0] << ", " << mi->pos[1] << ", " << mi->pos[2] << ", " << mi->pos[3] << ", " << mi->pos[4] << ", " << mi->pos[5] << ", " << mi->pos[6] << std::endl;
 
+        std::string err;
+        mi->comm->allowMotorsCalibrationToStart(1, err);
+
+        std::cout << err << std::endl;
+
+        repl::sleep(1);
+
+        mi->comm->requestNewCalibration();
+
         bool ok = true;
         while(ok) {
 
