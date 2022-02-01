@@ -2,10 +2,14 @@
 
 #include <string>
 #include <stdio.h>
+#include <cstdarg>
 
-template<typename... Args>
-void format_string(const char *format, Args... args) {
-    printf(format, args...);
+void format_string(const char *format, ...) {
+    va_list arg;
+    int done;
+    va_start(arg, format);
+    done = vfprintf(stdout, format, arg);
+    va_end(arg);
 }
 
 template<typename... Args>
