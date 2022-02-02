@@ -63,12 +63,14 @@ int NiryoOneCommunication::init()
         if (result != 0) {
             return result;
         }
+        OUTPUT_INFO("Initialised can");
     }
     if (dxl_enabled) {
         result =  dxlComm->init(hardware_version);
         if (result != 0) {
             return result;
         }
+        OUTPUT_INFO("Initialised dxl");
     }
     return result;
 }
