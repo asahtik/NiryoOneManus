@@ -85,7 +85,7 @@ int CanCommunication::init(int hardware_version)
     // TODO: get params
     // // get connected motors from rosparams
     // ros::param::get("/niryo_one/motors/can_required_motors", required_steppers_ids);
-    required_steppers_ids.push_back(1); required_steppers_ids.push_back(2); required_steppers_ids.push_back(3); required_steppers_ids.push_back(4);
+    required_steppers_ids.push_back(1); required_steppers_ids.push_back(2); required_steppers_ids.push_back(3);
     // ros::param::get("/niryo_one/motors/can_authorized_motors", allowed_steppers_ids);
     allowed_steppers_ids.push_back(1); allowed_steppers_ids.push_back(2); allowed_steppers_ids.push_back(3); allowed_steppers_ids.push_back(6); allowed_steppers_ids.push_back(7);
 

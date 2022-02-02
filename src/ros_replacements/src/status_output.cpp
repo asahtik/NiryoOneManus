@@ -10,7 +10,8 @@ void OUTPUT_INFO(std::string format, ...) {
 }
 
 void OUTPUT_WARNING(std::string format, ...) {
-    const char *f = ("[WARNING]" + format + "\n").c_str();
+    std::string str = "[WARNING] " + format + "\n";
+    const char *f = str.c_str();
     va_list arg;
     va_start(arg, format);
     vprintf(f, arg);
@@ -18,7 +19,8 @@ void OUTPUT_WARNING(std::string format, ...) {
 }
 
 void OUTPUT_ERROR(std::string format, ...) {
-    const char *f = ("[ERROR]" + format + "\n").c_str();
+    std::string str = "[ERROR] " + format + "\n";
+    const char *f = str.c_str();
     va_list arg;
     va_start(arg, format);
     vprintf(f, arg);
