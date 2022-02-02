@@ -30,9 +30,12 @@ void controlLoop()
         repl::sleep(1);
 
         OUTPUT_INFO("Writing position");
-
-        mi->cmd[3] = 1;
-        mi->write();
+        mi->cmd[0] = 1; mi->cmd[1] = 1; mi->cmd[2] = 1; mi->cmd[3] = 1; mi->cmd[4] = 1; mi->cmd[5] = 1; mi->cmd[6] = 1;
+        for (int i = 0; i < 10000; ++i) {
+            mi->read();
+            mi->write();
+            repl::sleep(0.01);
+        }
         bool ok = true;
         repl::sleep(10);
     }
