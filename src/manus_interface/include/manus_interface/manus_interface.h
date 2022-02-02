@@ -8,8 +8,10 @@ public:
     void read();
     void write();
 
-    double pos[6];
-    // double vel[6];
+    double pos[6] {0};
+    double vel[6] {0};
+    double cmd[6] {0};
+    double eff[6] {0};
 
     std::shared_ptr<NiryoOneCommunication> comm;
 };

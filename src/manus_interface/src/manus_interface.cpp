@@ -11,10 +11,10 @@ NiryoOneManusInterface::NiryoOneManusInterface() {
 }
 
 void NiryoOneManusInterface::init() {
-    comm->activateLearningMode(true);
-    repl::sleep(1);
     comm->manageHardwareConnection();
-    repl::sleep(1);
+    repl::sleep(0.8);
+    comm->activateLearningMode(true);
+    repl::sleep(0.2);
 }
 
 void NiryoOneManusInterface::read() {
@@ -32,5 +32,5 @@ void NiryoOneManusInterface::read() {
 
 void NiryoOneManusInterface::write() {
     // TODO: velocity not yet implemented on niryo's side
-    comm->sendPositionToRobot(pos);
+    comm->sendPositionToRobot(cmd);
 }
