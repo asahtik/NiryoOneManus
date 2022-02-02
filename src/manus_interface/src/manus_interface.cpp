@@ -10,6 +10,13 @@ NiryoOneManusInterface::NiryoOneManusInterface() {
     }
 }
 
+void NiryoOneManusInterface::init() {
+    comm->activateLearningMode(true);
+    repl::sleep(1);
+    comm->manageHardwareConnection();
+    repl::sleep(1);
+}
+
 void NiryoOneManusInterface::read() {
     double pos_to_read[6] = {0.0};
     

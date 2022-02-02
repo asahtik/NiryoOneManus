@@ -4,11 +4,12 @@
 class NiryoOneManusInterface {
 public:
     NiryoOneManusInterface();
+    void init();
     void read();
     void write();
 
     double pos[6];
-    double vel[6];
+    // double vel[6];
 
     std::shared_ptr<NiryoOneCommunication> comm;
 };
