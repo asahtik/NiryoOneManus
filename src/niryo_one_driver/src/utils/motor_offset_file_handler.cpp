@@ -29,7 +29,7 @@
 bool get_motors_calibration_offsets(std::vector<int> &motor_id_list,  std::vector<int> &steps_list)
 {
     // TODO: filename
-    std::string file_name = "/home/niryo/niryo_one_saved_values/stepper_motor_calibration_offsets.txt"; // Todo rosparam
+    std::string file_name = "/home/ubuntu/niryo_one_saved_values/stepper_motor_calibration_offsets.txt";
     std::vector<std::string> lines;
     std::string current_line;
     
@@ -61,7 +61,7 @@ bool set_motors_calibration_offsets(std::vector<int> &motor_id_list, std::vector
         return false;
     }
 
-    std::string file_name = "/home/niryo/niryo_one_saved_values/stepper_motor_calibration_offsets.txt"; // Todo rosparam
+    std::string file_name = "/home/ubuntu/niryo_one_saved_values/stepper_motor_calibration_offsets.txt"; // Todo rosparam
     size_t found = file_name.find_last_of("/");
     std::string folder_name = file_name.substr(0, found);
 

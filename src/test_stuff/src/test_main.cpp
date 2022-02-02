@@ -24,8 +24,6 @@ void controlLoop()
 
         repl::sleep(1);
 
-        mi->comm->requestNewCalibration();
-
         bool ok = true;
         while(ok) {
 
