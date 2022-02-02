@@ -1,5 +1,5 @@
 #include "niryo_one_driver/niryo_one_communication.h"
-#include "ros_replacements/ros_time_repl.hpp"
+#include "ros_replacements/ros_time_repl.h"
 
 class NiryoOneManusInterface {
 public:

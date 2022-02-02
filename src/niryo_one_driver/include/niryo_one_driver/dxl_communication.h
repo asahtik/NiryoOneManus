@@ -30,7 +30,7 @@
 #include "niryo_one_driver/xl320_driver.h"
 #include "niryo_one_driver/xl430_driver.h"
 
-#include "ros_replacements/ros_time_repl.hpp"
+#include "ros_replacements/ros_time_repl.h"
 
 #define DXL_MOTOR_4_ID   2 // V2 - axis 4
 #define DXL_MOTOR_5_ID   3 // V2 - axis 5

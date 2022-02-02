@@ -8,8 +8,6 @@ project(dynamixel_sdk)
 # Set variables
 ################################################################################
 
-set(REPLACEMENTS ${CMAKE_CURRENT_SOURCE_DIR}/src/ros_replacements)
-
 set(SOURCES
   ${CMAKE_CURRENT_LIST_DIR}/src/packet_handler.cpp
   ${CMAKE_CURRENT_LIST_DIR}/src/protocol1_packet_handler.cpp
@@ -40,11 +38,10 @@ set(HEADERS
 add_library(dynamixel_sdk
   ${SOURCES}
   ${HEADERS}
-  ${REPLACEMENTS}/ros_replacements/status_output.hpp
 )
-
-target_include_directories(dynamixel_sdk PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include ${REPLACEMENTS})
-# add_dependencies(dynamixel_sdk ${${PROJECT_NAME}_EXPORTED_TARGETS})
+target_link_libraries(dynamixel_sdk ros_replacements)
+target_include_directories(dynamixel_sdk PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include ros_replacements)
+add_dependencies(dynamixel_sdk ros_replacements)
 
 EXECUTE_PROCESS( COMMAND uname -m COMMAND tr -d '\n' OUTPUT_VARIABLE ARCHITECTURE )
 message( STATUS "Architecture: ${ARCHITECTURE}" )

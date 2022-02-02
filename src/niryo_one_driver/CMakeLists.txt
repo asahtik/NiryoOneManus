@@ -1,10 +1,6 @@
 cmake_minimum_required(VERSION 3.0.0)
 project(niryo_one_driver VERSION 0.1.0)
 
-set(DYNAMIXEL_SDK_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/dynamixel_sdk)
-set(MCP_CAN_RPI_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/mcp_can_rpi)
-set(REPLACEMENTS ${CMAKE_CURRENT_SOURCE_DIR}/src/ros_replacements)
-
 set(SOURCES_COMM
   ${CMAKE_CURRENT_LIST_DIR}/src/hw_comm/can_communication.cpp
   ${CMAKE_CURRENT_LIST_DIR}/src/hw_comm/dxl_communication.cpp
@@ -56,16 +52,11 @@ add_library(niryo_one_driver
   ${SOURCES_UTILS}
   ${SOURCES}
   ${HEADERS}
-  ${REPLACEMENTS}/ros_replacements/ros_time_repl.hpp
-  ${REPLACEMENTS}/ros_replacements/status_output.hpp
-  ${MCP_CAN_RPI_DIR}/include/mcp_can_rpi/mcp_can_rpi.h
-  ${DYNAMIXEL_SDK_DIR}/include/dynamixel_sdk/dynamixel_sdk.h
 )
-target_link_libraries(niryo_one_driver dynamixel_sdk mcp_can_rpi Threads::Threads)
-target_include_directories(niryo_one_driver PRIVATE ${CMAKE_CURRENT_LIST_DIR}/include)
-target_include_directories(niryo_one_driver PUBLIC dynamixel_sdk mcp_can_rpi ${REPLACEMENTS})
+target_link_libraries(niryo_one_driver ros_replacements dynamixel_sdk mcp_can_rpi Threads::Threads)
+target_include_directories(niryo_one_driver PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include dynamixel_sdk mcp_can_rpi ros_replacements)
 
-add_dependencies(niryo_one_driver dynamixel_sdk mcp_can_rpi)
+add_dependencies(niryo_one_driver ros_replacements dynamixel_sdk mcp_can_rpi)
 
 #
 # wiringPi should be installed only on a Raspberry Pi board

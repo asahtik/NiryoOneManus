@@ -28,7 +28,7 @@
 #include <thread>
 #include <functional>
 
-#include "ros_replacements/ros_time_repl.hpp"
+#include "ros_replacements/ros_time_repl.h"
 
 class RpiDiagnostics {
 

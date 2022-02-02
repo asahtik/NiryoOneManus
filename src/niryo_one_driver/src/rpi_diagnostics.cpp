@@ -18,7 +18,7 @@
 */
 
 #include "niryo_one_driver/rpi_diagnostics.h"
-#include "ros_replacements/status_output.hpp"
+#include "ros_replacements/status_output.h"
 
 RpiDiagnostics::RpiDiagnostics()
 {

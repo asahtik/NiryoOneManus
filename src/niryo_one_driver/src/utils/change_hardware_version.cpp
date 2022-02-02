@@ -18,7 +18,7 @@
 */
 
 #include "niryo_one_driver/change_hardware_version.h"
-#include "ros_replacements/status_output.hpp"
+#include "ros_replacements/status_output.h"
 #define __arm__ 0
 int change_hardware_version_and_reboot(int old_version, int new_version)
 {

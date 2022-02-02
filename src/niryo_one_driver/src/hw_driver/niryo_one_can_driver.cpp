@@ -18,7 +18,7 @@
 */
 
 #include "niryo_one_driver/niryo_one_can_driver.h"
-#include "ros_replacements/status_output.hpp"
+#include "ros_replacements/status_output.h"
 
 NiryoCanDriver::NiryoCanDriver(int spi_channel, int spi_baudrate, INT8U gpio_can_interrupt) {
     mcp_can.reset(new MCP_CAN(spi_channel, spi_baudrate, gpio_can_interrupt)); 

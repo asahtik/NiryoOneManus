@@ -1,5 +1,5 @@
 #include "manus_interface/manus_interface.h"
-#include "ros_replacements/ros_time_repl.hpp"
+#include "ros_replacements/ros_time_repl.h"
 
 #include <iostream>
 

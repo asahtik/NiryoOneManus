@@ -29,7 +29,7 @@
 #include "niryo_one_driver/niryo_one_can_driver.h"
 #include "niryo_one_driver/motor_offset_file_handler.h"
 
-#include "ros_replacements/ros_time_repl.hpp"
+#include "ros_replacements/ros_time_repl.h"
 
 #define TIME_TO_WAIT_IF_BUSY 0.0005
 

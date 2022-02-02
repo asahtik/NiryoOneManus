@@ -18,7 +18,7 @@
 */
 
 #include "niryo_one_driver/dxl_communication.h"
-#include "ros_replacements/status_output.hpp"
+#include "ros_replacements/status_output.h"
 
 uint32_t DxlCommunication::rad_pos_to_xl320_pos(double position_rad)
 {

@@ -22,7 +22,7 @@
 
 #include "niryo_one_driver/communication_base.h"
 
-#include "ros_replacements/ros_time_repl.hpp"
+#include "ros_replacements/ros_time_repl.h"
 
 // class NiryoOneHardwareInterface: public hardware_interface::RobotHW {
 class NiryoOneHardwareInterface {

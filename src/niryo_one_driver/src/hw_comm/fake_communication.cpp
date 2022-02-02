@@ -18,7 +18,7 @@
 */
 
 #include "niryo_one_driver/fake_communication.h"
-#include "ros_replacements/status_output.hpp"
+#include "ros_replacements/status_output.h"
 
 FakeCommunication::FakeCommunication(int hardware_version)
 {

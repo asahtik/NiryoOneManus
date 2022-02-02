@@ -28,7 +28,7 @@
 #include "niryo_one_driver/fake_communication.h"
 #include "niryo_one_driver/ros_interface.h"
 #include "niryo_one_driver/rpi_diagnostics.h"
-#include "ros_replacements/status_output.hpp"
+#include "ros_replacements/status_output.h"
 
 class NiryoOneDriver {
 

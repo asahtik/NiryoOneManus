@@ -18,7 +18,7 @@
 */
 
 #include "niryo_one_driver/ros_interface.h"
-#include "ros_replacements/status_output.hpp"
+#include "ros_replacements/status_output.h"
 
 RosInterface::RosInterface(CommunicationBase* niryo_one_comm, RpiDiagnostics* rpi_diagnostics,
         bool *flag_reset_controllers, bool learning_mode_on, int hardware_version)

@@ -1,5 +1,5 @@
 #include "niryo_one_driver/test_motors.h"
-#include "ros_replacements/status_output.hpp"
+#include "ros_replacements/status_output.h"
 
 NiryoOneTestMotor::NiryoOneTestMotor()
 {

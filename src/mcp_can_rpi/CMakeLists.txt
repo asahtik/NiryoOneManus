@@ -4,8 +4,6 @@ project(mcp_can_rpi VERSION 0.1.0)
 ################################################################################
 # Set variables
 ################################################################################
-set(REPLACEMENTS ${CMAKE_CURRENT_SOURCE_DIR}/src/ros_replacements)
-
 set(SOURCES 
   ${CMAKE_CURRENT_LIST_DIR}/src/mcp_can_rpi.cpp
 )
@@ -21,9 +19,11 @@ set(HEADERS
 add_library(mcp_can_rpi
   ${SOURCES}
   ${HEADERS}
-  ${REPLACEMENTS}/ros_replacements/status_output.hpp
 )
-target_include_directories(mcp_can_rpi PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include ${REPLACEMENTS})
+target_link_libraries(mcp_can_rpi ros_replacements)
+target_include_directories(mcp_can_rpi PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include ros_replacements)
+
+add_dependencies(mcp_can_rpi ros_replacements)
 
 EXECUTE_PROCESS( COMMAND uname -m COMMAND tr -d '\n' OUTPUT_VARIABLE ARCHITECTURE )
 message( STATUS "Architecture: ${ARCHITECTURE}" )

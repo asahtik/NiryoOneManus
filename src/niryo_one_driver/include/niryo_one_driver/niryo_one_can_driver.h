@@ -22,7 +22,7 @@
 
 #include "mcp_can_rpi/mcp_can_rpi.h"
 
-#include "ros_replacements/ros_time_repl.hpp"
+#include "ros_replacements/ros_time_repl.h"
 
 #define CAN_CMD_POSITION     0x03
 #define CAN_CMD_TORQUE       0x04

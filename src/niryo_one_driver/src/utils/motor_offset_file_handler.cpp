@@ -18,7 +18,7 @@
 */
 
 #include "niryo_one_driver/motor_offset_file_handler.h"
-#include "ros_replacements/status_output.hpp"
+#include "ros_replacements/status_output.h"
 
 #include <system_error>
 #include <filesystem>

@@ -1,5 +1,5 @@
 #include "manus_interface/manus_interface.h"
-#include "ros_replacements/status_output.hpp"
+#include "ros_replacements/status_output.h"
 
 NiryoOneManusInterface::NiryoOneManusInterface() {
     comm.reset(new NiryoOneCommunication(2));

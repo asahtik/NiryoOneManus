@@ -19,7 +19,7 @@
 
 #include <string>
 
-#include "ros_replacements/ros_time_repl.hpp"
+#include "ros_replacements/ros_time_repl.h"
 
 #ifndef NIRYO_STEPPER_MOTOR_STATE_H
 #define NIRYO_STEPPER_MOTOR_STATE_H

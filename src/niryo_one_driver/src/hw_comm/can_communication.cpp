@@ -18,7 +18,7 @@
 */
 
 #include "niryo_one_driver/can_communication.h"
-#include "ros_replacements/status_output.hpp"
+#include "ros_replacements/status_output.h"
 
 int32_t CanCommunication::rad_pos_to_steps(double position_rad, double gear_ratio, double direction)
 {

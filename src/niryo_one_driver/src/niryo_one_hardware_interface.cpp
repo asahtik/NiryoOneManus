@@ -18,7 +18,7 @@
 */
 
 #include "niryo_one_driver/niryo_one_hardware_interface.h"
-#include "ros_replacements/status_output.hpp"
+#include "ros_replacements/status_output.h"
 
 NiryoOneHardwareInterface::NiryoOneHardwareInterface(CommunicationBase* niryo_one_comm) 
 {

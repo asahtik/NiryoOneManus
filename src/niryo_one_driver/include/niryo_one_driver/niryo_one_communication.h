@@ -30,7 +30,7 @@
 
 #include "niryo_one_driver/change_hardware_version.h"
 
-#include "ros_replacements/ros_time_repl.hpp"
+#include "ros_replacements/ros_time_repl.h"
 
 class NiryoOneCommunication : public CommunicationBase {
 
