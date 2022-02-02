@@ -18,8 +18,12 @@ void controlLoop()
 
         std::cout << err << std::endl;
 
-        repl::sleep(1);
+        while (mi->comm->isCalibrationInProgress());
 
+        repl::sleep(5);
+
+        mi->pos[3] = 1;
+        mi->write();
         bool ok = true;
         while(ok) {
 
