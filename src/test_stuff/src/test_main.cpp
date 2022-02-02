@@ -35,6 +35,7 @@ void controlLoop()
 int main(int argc, char** argv) {
     mi = new NiryoOneManusInterface();
     mi->comm->activateLearningMode(true);
-
+    repl::sleep(1);
+    mi->comm->manageHardwareConnection();
     controlLoop();
 }
