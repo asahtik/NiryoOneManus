@@ -11,6 +11,8 @@ NiryoOneManusInterface::NiryoOneManusInterface() {
 }
 
 void NiryoOneManusInterface::init() {
+    comm->scanAndCheckMotors();
+    repl::sleep(0.1);
     comm->manageHardwareConnection();
     repl::sleep(0.8);
     comm->activateLearningMode(true);

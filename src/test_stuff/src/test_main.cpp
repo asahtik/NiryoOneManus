@@ -21,6 +21,8 @@ void controlLoop()
 
         repl::sleep(1);
 
+        if (!mi->comm->isCalibrationInProgress()) mi->comm->requestNewCalibration();
+
         while (mi->comm->isCalibrationInProgress()) repl::sleep(0.25);
 
         repl::sleep(1);
@@ -32,6 +34,7 @@ void controlLoop()
         OUTPUT_INFO("Writing position");
         mi->cmd[0] = 1; mi->cmd[1] = 1; mi->cmd[2] = 1; mi->cmd[3] = 1; mi->cmd[4] = 1; mi->cmd[5] = 1; mi->cmd[6] = 1;
         for (int i = 0; i < 10000; ++i) {
+            // OUTPUT_INFO("Connection %d", mi->comm->isConnectionOk());
             mi->read();
             mi->write();
             repl::sleep(0.01);

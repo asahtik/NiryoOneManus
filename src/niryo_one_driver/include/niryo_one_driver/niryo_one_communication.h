@@ -91,6 +91,7 @@ class NiryoOneCommunication : public CommunicationBase {
                 uint32_t reg_address, uint32_t byte_number);
 
         void rebootMotors();
+        bool scanAndCheckMotors();
 
     private:
 
@@ -111,8 +112,6 @@ class NiryoOneCommunication : public CommunicationBase {
         void manageHardwareConnectionLoop();
         void manageCanConnectionLoop();
         void manageDxlConnectionLoop();
-
-        bool scanAndCheckMotors();
 
         // used when can or dxl is disabled
         double pos_can_disabled_v1[4] = { 0.0, 0.628, -1.4, 0.0 };
