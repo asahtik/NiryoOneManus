@@ -612,6 +612,7 @@ int NiryoOneCommunication::pushAirVacuumPump(uint8_t id, uint16_t push_air_posit
 
 int NiryoOneCommunication::pingAndSetDxlTool(uint8_t id, std::string name)
 {
+    // 11, Gripper 1
     if (dxl_enabled) {
         return dxlComm->pingAndSetTool(id, name);
     }
@@ -620,6 +621,7 @@ int NiryoOneCommunication::pingAndSetDxlTool(uint8_t id, std::string name)
 
 int NiryoOneCommunication::openGripper(uint8_t id, uint16_t open_position, uint16_t open_speed, uint16_t open_hold_torque)
 {
+    // Speed: [100, 1000] - 300, gripper1, id: 11: open pos: 600, closed pos: 230, hold torque: 128, max close torque: 1023
     if (dxl_enabled) {
         return dxlComm->openGripper(id, open_position, open_speed, open_hold_torque);
     }
