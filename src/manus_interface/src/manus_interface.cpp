@@ -2,7 +2,7 @@
 #include "ros_replacements/status_output.h"
 
 NiryoOneManusInterface::NiryoOneManusInterface() {
-    comm.reset(new NiryoOneCommunication(2));
+    comm.reset(new NiryoOneCommunication());
     int init_result = comm->init();
     if (init_result != 0) {
         OUTPUT_ERROR("Error initialising niryo communication");

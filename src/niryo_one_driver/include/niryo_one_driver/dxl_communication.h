@@ -83,13 +83,12 @@ class DxlCommunication {
     public:
         
         DxlCommunication();
-        int init(int hardware_version);
+        int init();
         int setupCommunication();
 
         void startHardwareControlLoop(bool limited_mode);
         void stopHardwareControlLoop();
 
-        void getCurrentPositionV1(double *axis_5_pos, double *axis_6_pos); 
         void getCurrentPositionV2(double *axis_4_pos, double *axis_5_pos, double *axis_6_pos); 
         
         void getHardwareStatus(bool *is_connection_ok, std::string &error_message,
@@ -101,7 +100,6 @@ class DxlCommunication {
         bool isOnLimitedMode();
 
         void setControlMode(int control_mode); // position, velocity, or torque
-        void setGoalPositionV1(double axis_5_pos, double axis_6_pos);
         void setGoalPositionV2(double axis_4_pos, double axis_5_pos, double axis_6_pos);
         void setTorqueOn(bool on);
         void setLeds(std::vector<int> &leds);
@@ -120,14 +118,8 @@ class DxlCommunication {
         
         int openGripper(uint8_t id, uint16_t open_position, uint16_t open_speed, uint16_t open_hold_torque);
         int closeGripper(uint8_t id, uint16_t close_position, uint16_t close_speed, uint16_t close_hold_torque, uint16_t close_max_torque);
-        
-        int pullAirVacuumPump(uint8_t id, uint16_t pull_air_position, uint16_t pull_air_hold_torque);
-        int pushAirVacuumPump(uint8_t id, uint16_t push_air_position);
 
     private:
-
-        // Niryo One hardware version
-        int hardware_version;
 
         std::string device_name;
         int uart_baudrate;
@@ -158,8 +150,6 @@ class DxlCommunication {
         // motors 
         DxlMotorState m4; // V2 only
         DxlMotorState m5; // V2 only
-        DxlMotorState m5_1; // V1 only
-        DxlMotorState m5_2; // V1 only
         DxlMotorState m6; // V1 + V2
         DxlMotorState tool; // V1 + V2
         std::vector<DxlMotorState*> motors;

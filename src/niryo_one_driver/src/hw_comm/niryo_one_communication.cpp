@@ -22,10 +22,8 @@
 
 #include <iostream>
 
-NiryoOneCommunication::NiryoOneCommunication(int hardware_version)
+NiryoOneCommunication::NiryoOneCommunication()
 {
-    this->hardware_version = hardware_version;
-    
     // TODO: get params
     // ros::param::get("~can_enabled", can_enabled);
     can_enabled = true;
@@ -59,14 +57,14 @@ int NiryoOneCommunication::init()
 {
     int result = 0;
     if (can_enabled) {
-        result = canComm->init(hardware_version);
+        result = canComm->init();
         if (result != 0) {
             return result;
         }
         OUTPUT_INFO("Initialised can");
     }
     if (dxl_enabled) {
-        result =  dxlComm->init(hardware_version);
+        result =  dxlComm->init();
         if (result != 0) {
             return result;
         }
@@ -199,97 +197,11 @@ void NiryoOneCommunication::manageCanConnectionLoop()
     }
 }
 
-// // stepper niryo one conveyor belt test is here
-// int NiryoOneCommunication::pingAndSetConveyor(uint8_t id, bool activate, std::string &message)
-// {
-//     if (can_enabled) {
-//         int res = canComm->setConveyor(id, activate); 
-//         if (res == CONVEYOR_STATE_SET_OK)
-//             message = " Set conveyor OK ";
-//         else 
-//             message = "Set conveyor ERROR"; 
-//         return res;
-//     }
-//     message = " Set conveyor ERROR ";
-//     return CONVEYOR_STATE_SET_ERROR;
-// }
-
-// // stepper niryo one conveyor belt test is here
-// int NiryoOneCommunication::moveConveyor(uint8_t id, bool activate, int16_t speed, int8_t direction, std::string &message)
-// {
-//     if (can_enabled) {
-//         int res = canComm->conveyorOn(id, activate, speed, direction);
-//         if (res == CONVEYOR_CONTROL_OK){
-//             message = "Command conveyor OK";
-//         }
-//         else 
-//             message = "Command conveyor ERROR";
-
-//         return res; 
-//     }
-//     message = "Can problem";
-//     return CONVEYOR_CONTROL_ERROR;
-// }
-// int NiryoOneCommunication::updateIdConveyor(uint8_t old_id, uint8_t new_id, std::string &message)
-// {
-//     if (can_enabled) {
-//         int res = canComm->updateConveyorId(old_id, new_id);
-//         if (res == CONVEYOR_UPDATE_ID_OK) {
-//             message = " Update conveyor  OK ";
-//             return res; 
-//         } else {
-//             message = " Update conveyor  ERROR ";
-//             return res; 
-//         }
-//     }
-//     message = "Can problem";
-//     return CONVEYOR_UPDATE_ID_ERROR;
-// }
-
-// void NiryoOneCommunication::getConveyorFeedBack(uint8_t conveyor_id, bool* connection_state, bool* running, int16_t* speed, int8_t* direction)
-// {
-//     if (can_enabled) {
-//         canComm->getConveyorFeedBack(conveyor_id, connection_state, running, speed, direction);
-//     }
-// }
-
-void NiryoOneCommunication::checkHardwareVersionFromDxlMotors()
-{
-    // Check if hardware_version is compatible
-    // The purpose here is retro-compatibility with version 1.
-    // Version 2 is the default
-    // If the robot is still V1 (old version) we can detect it from
-    // Dynamixel motors setup, and automatically change the version
-    // used, without any user input
-    int detected_version = -1;
-    detected_version = dxlComm->detectVersion();
-    while (detected_version < 0) {
-        OUTPUT_WARNING("Scan to find Dxl motors + Check hardware version");
-        detected_version = dxlComm->detectVersion();
-        repl::sleep(0.25);
-    }
-
-    OUTPUT_INFO("Detected version from hardware : %d", detected_version);
-
-    if (detected_version == 0) {
-        // version could not be detected from current hardware setup
-        // it seems that some motors have been disabled for debug purposes
-        // --> continue like nothing happened
-    }
-    else if ((detected_version == 1 && hardware_version == 2)
-            || (detected_version == 2 && hardware_version == 1)) {
-        // change version (V1->V2 or V2->V1) and reboot
-        change_hardware_version_and_reboot(hardware_version, detected_version);
-    }
-}
-
 void NiryoOneCommunication::manageDxlConnectionLoop()
 {
     if (!dxl_enabled) {
         return;
     }
-
-    checkHardwareVersionFromDxlMotors();
 
     bool ok = true;
 
@@ -477,39 +389,20 @@ void NiryoOneCommunication::getFirmwareVersions(std::vector<std::string> &motor_
 
 void NiryoOneCommunication::getCurrentPosition(double pos[6])
 {
-    if (hardware_version == 1) {
-        if (can_enabled) { canComm->getCurrentPositionV1(&pos[0], &pos[1], &pos[2], &pos[3]); }
-        if (dxl_enabled) { dxlComm->getCurrentPositionV1(&pos[4], &pos[5]); }
+    if (can_enabled) { canComm->getCurrentPositionV2(&pos[0], &pos[1], &pos[2]); }
+    if (dxl_enabled) { dxlComm->getCurrentPositionV2(&pos[3], &pos[4], &pos[5]); }
 
-        // if disabled (debug purposes)
-        if (!can_enabled) {
-            pos[0] = pos_can_disabled_v1[0];
-            pos[1] = pos_can_disabled_v1[1];
-            pos[2] = pos_can_disabled_v1[2];
-            pos[3] = pos_can_disabled_v1[3];
-        }
-
-        if (!dxl_enabled) {
-            pos[4] = pos_dxl_disabled_v1[0];
-            pos[5] = pos_dxl_disabled_v1[1];
-        }
+    // if disabled (debug purposes)
+    if (!can_enabled) {
+        pos[0] = pos_can_disabled_v2[0];
+        pos[1] = pos_can_disabled_v2[1];
+        pos[2] = pos_can_disabled_v2[2];
     }
-    else if (hardware_version == 2) {
-        if (can_enabled) { canComm->getCurrentPositionV2(&pos[0], &pos[1], &pos[2]); }
-        if (dxl_enabled) { dxlComm->getCurrentPositionV2(&pos[3], &pos[4], &pos[5]); }
 
-        // if disabled (debug purposes)
-        if (!can_enabled) {
-            pos[0] = pos_can_disabled_v2[0];
-            pos[1] = pos_can_disabled_v2[1];
-            pos[2] = pos_can_disabled_v2[2];
-        }
-
-        if (!dxl_enabled) {
-            pos[3] = pos_dxl_disabled_v2[0];
-            pos[4] = pos_dxl_disabled_v2[1];
-            pos[5] = pos_dxl_disabled_v2[2];
-        }
+    if (!dxl_enabled) {
+        pos[3] = pos_dxl_disabled_v2[0];
+        pos[4] = pos_dxl_disabled_v2[1];
+        pos[5] = pos_dxl_disabled_v2[2];
     }
 }
 
@@ -522,39 +415,20 @@ void NiryoOneCommunication::sendPositionToRobot(const double cmd[6])
 
     // don't send position command when calibrating motors
     if (!is_calibration_in_progress) {
-        if (hardware_version == 1) {
-            if (can_enabled) { canComm->setGoalPositionV1(cmd[0], cmd[1], cmd[2], cmd[3]); }
-            if (dxl_enabled) { dxlComm->setGoalPositionV1(cmd[4], cmd[5]); }
+        if (can_enabled) { canComm->setGoalPositionV2(cmd[0], cmd[1], cmd[2]); }
+        if (dxl_enabled) { dxlComm->setGoalPositionV2(cmd[3], cmd[4], cmd[5]); }
 
-            // if disabled (debug purposes)
-            if (!can_enabled) {
-                pos_can_disabled_v1[0] = cmd[0];
-                pos_can_disabled_v1[1] = cmd[1];
-                pos_can_disabled_v1[2] = cmd[2];
-                pos_can_disabled_v1[3] = cmd[3];
-            }
-
-            if (!dxl_enabled) {
-                pos_dxl_disabled_v1[0] = cmd[4];
-                pos_dxl_disabled_v1[1] = cmd[5];
-            }
+        // if disabled (debug purposes)
+        if (!can_enabled) {
+            pos_can_disabled_v2[0] = cmd[0];
+            pos_can_disabled_v2[1] = cmd[1];
+            pos_can_disabled_v2[2] = cmd[2];
         }
-        else if (hardware_version == 2) {
-            if (can_enabled) { canComm->setGoalPositionV2(cmd[0], cmd[1], cmd[2]); }
-            if (dxl_enabled) { dxlComm->setGoalPositionV2(cmd[3], cmd[4], cmd[5]); }
 
-            // if disabled (debug purposes)
-            if (!can_enabled) {
-                pos_can_disabled_v2[0] = cmd[0];
-                pos_can_disabled_v2[1] = cmd[1];
-                pos_can_disabled_v2[2] = cmd[2];
-            }
-
-            if (!dxl_enabled) {
-                pos_dxl_disabled_v2[0] = cmd[3];
-                pos_dxl_disabled_v2[1] = cmd[4];
-                pos_dxl_disabled_v2[2] = cmd[5];
-            }
+        if (!dxl_enabled) {
+            pos_dxl_disabled_v2[0] = cmd[3];
+            pos_dxl_disabled_v2[1] = cmd[4];
+            pos_dxl_disabled_v2[2] = cmd[5];
         }
     }
 }
@@ -592,22 +466,6 @@ bool NiryoOneCommunication::setLeds(std::vector<int> &leds, std::string &message
 
     message = "Set LED ok";
     return true;
-}
-
-int NiryoOneCommunication::pullAirVacuumPump(uint8_t id, uint16_t pull_air_position, uint16_t pull_air_hold_torque)
-{
-    if (dxl_enabled) {
-        return dxlComm->pullAirVacuumPump(id, pull_air_position, pull_air_hold_torque);
-    }
-    return VACUUM_PUMP_STATE_PULLED;
-}
-
-int NiryoOneCommunication::pushAirVacuumPump(uint8_t id, uint16_t push_air_position)
-{
-    if (dxl_enabled) {
-        return dxlComm->pushAirVacuumPump(id, push_air_position);
-    }
-    return VACUUM_PUMP_STATE_PUSHED;
 }
 
 int NiryoOneCommunication::pingAndSetDxlTool(uint8_t id, std::string name)

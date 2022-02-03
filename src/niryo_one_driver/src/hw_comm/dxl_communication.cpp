@@ -45,16 +45,8 @@ DxlCommunication::DxlCommunication()
 
 }
 
-int DxlCommunication::init(int hardware_version)
+int DxlCommunication::init()
 {
-    this->hardware_version = hardware_version;
-    
-    if (hardware_version != 1 && hardware_version != 2) {
-        debug_error_message = "Incorrect hardware version, should be 1 or 2";
-        OUTPUT_ERROR("%s", debug_error_message.c_str());
-        return -1;
-    }
-
     // TODO: get params
     // // get params from rosparams
     // ros::param::get("~dxl_uart_device_name", device_name);
@@ -101,44 +93,21 @@ int DxlCommunication::init(int hardware_version)
     allowed_motors_ids.insert(allowed_motors_ids.end(), allowed_dxl_ids.begin(), allowed_dxl_ids.end());
 
     // Create motors
-    // hardware_version 1 : 2 motors for axis 5, 1 for axis 6, 1 for tool (all XL320)
-    if (hardware_version == 1) {
-        m5_1 = DxlMotorState("Servo Axis 5_1", DXL_MOTOR_5_1_ID, MOTOR_TYPE_XL320, XL320_MIDDLE_POSITION);
-        m5_2 = DxlMotorState("Servo Axis 5_2", DXL_MOTOR_5_2_ID, MOTOR_TYPE_XL320, XL320_MIDDLE_POSITION);
-    }
-    // hardware_version 2 : 1 motor (XL430) for axis 4, 1 (XL430) for axis 5, 1 (XL320) for axis 6, 1 (XL320) for tool
-    else if (hardware_version == 2) {
-        m4 = DxlMotorState("Servo Axis 4", DXL_MOTOR_4_ID, MOTOR_TYPE_XL430, XL430_MIDDLE_POSITION);
-        m5 = DxlMotorState("Servo Axis 5", DXL_MOTOR_5_ID, MOTOR_TYPE_XL430, XL430_MIDDLE_POSITION);
-    }
+    m4 = DxlMotorState("Servo Axis 4", DXL_MOTOR_4_ID, MOTOR_TYPE_XL430, XL430_MIDDLE_POSITION);
+    m5 = DxlMotorState("Servo Axis 5", DXL_MOTOR_5_ID, MOTOR_TYPE_XL430, XL430_MIDDLE_POSITION);
     
     m6 = DxlMotorState("Servo Axis 6", DXL_MOTOR_6_ID, MOTOR_TYPE_XL320, XL320_MIDDLE_POSITION);
 
     // Enable motors
-    if (hardware_version == 1) {
-        for (int i = 0 ; i < required_dxl_ids.size() ; i++) {
-            if      (required_dxl_ids.at(i) == m5_1.getId()) { m5_1.enable(); }
-            else if (required_dxl_ids.at(i) == m5_2.getId()) { m5_2.enable(); }
-            else if (required_dxl_ids.at(i) == m6.getId()) { m6.enable(); }
-            else {
-                debug_error_message = "Incorrect configuration : Wrong ID (" + std::to_string(required_dxl_ids.at(i)) 
-                    + ") given in Ros Param /niryo_one_motors/dxl_required_motors. You need to fix this !";
-                OUTPUT_ERROR("%s", debug_error_message.c_str());
-                return -1;
-            }
-        }
-    }
-    else if (hardware_version == 2) {
-        for (int i = 0 ; i < required_dxl_ids.size() ; i++) {
-            if      (required_dxl_ids.at(i) == m4.getId()) { m4.enable(); }
-            else if (required_dxl_ids.at(i) == m5.getId()) { m5.enable(); }
-            else if (required_dxl_ids.at(i) == m6.getId()) { m6.enable(); }
-            else {
-                debug_error_message = "Incorrect configuration : Wrong ID (" + std::to_string(required_dxl_ids.at(i)) 
-                    + ") given in Ros Param /niryo_one_motors/dxl_required_motors. You need to fix this !";
-                OUTPUT_ERROR("%s", debug_error_message.c_str());
-                return -1;
-            }
+    for (int i = 0 ; i < required_dxl_ids.size() ; i++) {
+        if      (required_dxl_ids.at(i) == m4.getId()) { m4.enable(); }
+        else if (required_dxl_ids.at(i) == m5.getId()) { m5.enable(); }
+        else if (required_dxl_ids.at(i) == m6.getId()) { m6.enable(); }
+        else {
+            debug_error_message = "Incorrect configuration : Wrong ID (" + std::to_string(required_dxl_ids.at(i)) 
+                + ") given in Ros Param /niryo_one_motors/dxl_required_motors. You need to fix this !";
+            OUTPUT_ERROR("%s", debug_error_message.c_str());
+            return -1;
         }
     }
    
@@ -150,14 +119,8 @@ int DxlCommunication::init(int hardware_version)
     }
 
     // Fill motors array 
-    if (hardware_version == 1) {
-        motors.push_back(&m5_1);
-        motors.push_back(&m5_2);
-    }
-    else if (hardware_version == 2) {
-        motors.push_back(&m4);
-        motors.push_back(&m5);
-    }
+    motors.push_back(&m4);
+    motors.push_back(&m5);
     motors.push_back(&m6);
 
     tool = DxlMotorState("No tool connected", 0, MOTOR_TYPE_XL320, XL320_MIDDLE_POSITION);
@@ -747,16 +710,10 @@ void DxlCommunication::hardwareControlLoop()
 void DxlCommunication::moveAllMotorsToHomePosition()
 {
     // 1. Set cmd home position
-    if (hardware_version == 1) {
-        m5_1.setPositionCommand(XL320_MIDDLE_POSITION);
-        m5_2.setPositionCommand(XL320_MIDDLE_POSITION);
-        m6.setPositionCommand(XL320_MIDDLE_POSITION);
-    }
-    else if (hardware_version == 2) {
-        m4.setPositionCommand(XL430_MIDDLE_POSITION);
-        m5.setPositionCommand(XL430_MIDDLE_POSITION);
-        m6.setPositionCommand(XL320_MIDDLE_POSITION);
-    }
+    m4.setPositionCommand(XL430_MIDDLE_POSITION);
+    m5.setPositionCommand(XL430_MIDDLE_POSITION);
+    m6.setPositionCommand(XL320_MIDDLE_POSITION);
+
     // if motor disabled, pos_state = pos_cmd (echo position)
     for (int i = 0 ; i < motors.size(); i++) {
         if (!motors.at(i)->isEnabled()) {
@@ -776,60 +733,26 @@ void DxlCommunication::setControlMode(int control_mode)
     write_torque_enable = (control_mode == DXL_CONTROL_MODE_TORQUE);     // not implemented yet
 }
 
-void DxlCommunication::setGoalPositionV1(double axis_5_pos, double axis_6_pos) 
-{
-    if (hardware_version == 1) {
-        // m5_1 and m5_2 have symetric position (rad 0.0 -> position 511 for both)
-        m5_1.setPositionCommand(rad_pos_to_xl320_pos(axis_5_pos));
-        m5_2.setPositionCommand(XL320_MIDDLE_POSITION * 2 - m5_1.getPositionCommand());
-        m6.setPositionCommand(rad_pos_to_xl320_pos(axis_6_pos));
-        
-        // if motor disabled, pos_state = pos_cmd (echo position)
-        for (int i = 0 ; i < motors.size(); i++) {
-            if (!motors.at(i)->isEnabled()) {
-                motors.at(i)->setPositionState(motors.at(i)->getPositionCommand());
-            }
-        }
-    }
-}
-
 void DxlCommunication::setGoalPositionV2(double axis_4_pos, double axis_5_pos, double axis_6_pos)
 {
-    if (hardware_version == 2) {
-        m4.setPositionCommand(rad_pos_to_xl430_pos(axis_4_pos));
-        // m5 for V2 is placed at the previous m5_2 place
-        m5.setPositionCommand(XL430_MIDDLE_POSITION * 2 - rad_pos_to_xl430_pos(axis_5_pos));
-        m6.setPositionCommand(rad_pos_to_xl320_pos(axis_6_pos));
-        
-        // if motor disabled, pos_state = pos_cmd (echo position)
-        for (int i = 0 ; i < motors.size(); i++) {
-            if (!motors.at(i)->isEnabled()) {
-                motors.at(i)->setPositionState(motors.at(i)->getPositionCommand());
-            }
+    m4.setPositionCommand(rad_pos_to_xl430_pos(axis_4_pos));
+    // m5 for V2 is placed at the previous m5_2 place
+    m5.setPositionCommand(XL430_MIDDLE_POSITION * 2 - rad_pos_to_xl430_pos(axis_5_pos));
+    m6.setPositionCommand(rad_pos_to_xl320_pos(axis_6_pos));
+    
+    // if motor disabled, pos_state = pos_cmd (echo position)
+    for (int i = 0 ; i < motors.size(); i++) {
+        if (!motors.at(i)->isEnabled()) {
+            motors.at(i)->setPositionState(motors.at(i)->getPositionCommand());
         }
-    }
-}
-
-void DxlCommunication::getCurrentPositionV1(double *axis_5_pos, double *axis_6_pos)
-{
-    if (hardware_version == 1) {
-        if (m5_1.isEnabled()) {
-            *axis_5_pos = xl320_pos_to_rad_pos(m5_1.getPositionState());
-        }
-        else { // in case motor 5_1 is disabled, take motor 5_2 (symetric) position for axis 5
-            *axis_5_pos = xl320_pos_to_rad_pos(XL320_MIDDLE_POSITION * 2 - m5_2.getPositionState());
-        }
-        *axis_6_pos = xl320_pos_to_rad_pos(m6.getPositionState());
     }
 }
 
 void DxlCommunication::getCurrentPositionV2(double *axis_4_pos, double *axis_5_pos, double *axis_6_pos)
 {
-    if (hardware_version == 2) {
-        *axis_4_pos = xl430_pos_to_rad_pos(m4.getPositionState());
-        *axis_5_pos = xl430_pos_to_rad_pos(XL430_MIDDLE_POSITION * 2 - m5.getPositionState());
-        *axis_6_pos = xl320_pos_to_rad_pos(m6.getPositionState());
-    }
+    *axis_4_pos = xl430_pos_to_rad_pos(m4.getPositionState());
+    *axis_5_pos = xl430_pos_to_rad_pos(XL430_MIDDLE_POSITION * 2 - m5.getPositionState());
+    *axis_6_pos = xl320_pos_to_rad_pos(m6.getPositionState());
 }
 
 void DxlCommunication::getHardwareStatus(bool *is_connection_ok, std::string &error_message, 
@@ -1027,70 +950,6 @@ int DxlCommunication::closeGripper(uint8_t id, uint16_t close_position, uint16_t
     write_tool_enable = true;
 
     return GRIPPER_STATE_CLOSE;
-}
-
-/*
- * This method should be called in a different thread than control loop
- */
-int DxlCommunication::pullAirVacuumPump(uint8_t id, uint16_t pull_air_position, uint16_t pull_air_hold_torque)
-{
-    // check gripper id, in case no ping has been done before, or wrong id given
-    if (id != tool.getId()) {
-        return TOOL_STATE_WRONG_ID;  
-    }
-   
-    int pull_air_velocity = 1023;
-
-    // set vacuum pump pos, vel and torque
-    tool.setVelocityCommand(pull_air_velocity);
-    tool.setPositionCommand(pull_air_position);
-    tool.setTorqueCommand(1023);
-    write_tool_enable = true;
-
-    // calculate pull air duration
-    int dxl_speed = pull_air_velocity * XL320_STEPS_FOR_1_SPEED; // position . sec-1
-    int dxl_steps_to_do = abs((int)pull_air_position - (int)tool.getPositionState()); // position
-    double seconds_to_wait = (double) dxl_steps_to_do / (double) dxl_speed; // sec
-    
-    repl::sleep(seconds_to_wait + 0.25);
-    
-    // set hold torque
-    tool.setTorqueCommand(pull_air_hold_torque);
-    write_tool_enable = true;
-
-    return VACUUM_PUMP_STATE_PULLED;
-}
-
-/*
- * This method should be called in a different thread than control loop
- */
-int DxlCommunication::pushAirVacuumPump(uint8_t id, uint16_t push_air_position)
-{
-    // check gripper id, in case no ping has been done before, or wrong id given
-    if (id != tool.getId()) {
-        return TOOL_STATE_WRONG_ID;  
-    }
-
-    int push_air_velocity = 1023;
-
-    // set vacuum pump pos, vel and torque
-    tool.setVelocityCommand(push_air_velocity);
-    tool.setPositionCommand(push_air_position);
-    tool.setTorqueCommand(1023);
-    write_tool_enable = true;
-
-    // calculate push air duration
-    int dxl_speed = push_air_velocity * XL320_STEPS_FOR_1_SPEED; // position . sec-1
-    int dxl_steps_to_do = abs((int)push_air_position - (int)tool.getPositionState()); // position
-    double seconds_to_wait = (double) dxl_steps_to_do / (double) dxl_speed; // sec
-    
-    repl::sleep(seconds_to_wait + 0.25);
-
-    // set torque to 0
-    tool.setTorqueCommand(0);
-    write_tool_enable = true;
-
-    return VACUUM_PUMP_STATE_PUSHED;
 }
         
 int DxlCommunication::scanAndCheck() 

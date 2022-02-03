@@ -66,15 +66,13 @@ class CanCommunication {
     public:
 
         CanCommunication();
-        int init(int hardware_version);
+        int init();
         int setupCommunication();
 
         void startHardwareControlLoop(bool limited_mode);
         void stopHardwareControlLoop();
 
-        void setGoalPositionV1(double axis_1_pos_goal, double axis_2_pos_goal, double axis_3_pos_goal, double axis_4_pos_goal);
         void setGoalPositionV2(double axis_1_pos_goal, double axis_2_pos_goal, double axis_3_pos_goal);
-        void getCurrentPositionV1(double *axis_1_pos, double *axis_2_pos, double *axis_3_pos, double *axis_4_pos);
         void getCurrentPositionV2(double *axis_1_pos, double *axis_2_pos, double *axis_3_pos);
 
         void getHardwareStatus(bool *is_connection_ok, std::string &error_message,
@@ -112,17 +110,8 @@ class CanCommunication {
         void setCalibrationFlag(bool flag);
 
         void synchronizeSteppers(bool begin_traj);
-        int setConveyor(uint8_t id, bool activate);
-        int conveyorOn(uint8_t id, bool activate, int16_t speed, int8_t direction);
-        int updateConveyorId(uint8_t id, uint8_t new_id_up);
-
-        void getConveyorFeedBack(uint8_t conveyor_id, bool* connection_state, bool* running, int16_t* speed, int8_t* direction);
-        // conveyor reset flags 
-        void resetConveyor(uint8_t conveyor_id);
     private:
 
-        // Niryo One hardware version
-        int hardware_version;
         int spi_channel;
         int spi_baudrate;
         int gpio_can_interrupt;

@@ -4,7 +4,6 @@ project(niryo_one_driver VERSION 0.1.0)
 set(SOURCES_COMM
   ${CMAKE_CURRENT_LIST_DIR}/src/hw_comm/can_communication.cpp
   ${CMAKE_CURRENT_LIST_DIR}/src/hw_comm/dxl_communication.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/src/hw_comm/fake_communication.cpp
   ${CMAKE_CURRENT_LIST_DIR}/src/hw_comm/niryo_one_communication.cpp
 )
 set(SOURCES_DRIVER
@@ -14,32 +13,22 @@ set(SOURCES_DRIVER
   ${CMAKE_CURRENT_LIST_DIR}/src/hw_driver/xl430_driver.cpp
 )
 set(SOURCES_UTILS
-  ${CMAKE_CURRENT_LIST_DIR}/src/utils/change_hardware_version.cpp
   ${CMAKE_CURRENT_LIST_DIR}/src/utils/motor_offset_file_handler.cpp
 )
 set(SOURCES
-  ${CMAKE_CURRENT_LIST_DIR}/src/niryo_one_driver_node.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/src/niryo_one_hardware_interface.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/src/ros_interface.cpp
   ${CMAKE_CURRENT_LIST_DIR}/src/rpi_diagnostics.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/src/test_motors.cpp
 )
 set(HEADERS
   ${CMAKE_CURRENT_LIST_DIR}/include/niryo_one_driver/can_communication.h
-  ${CMAKE_CURRENT_LIST_DIR}/include/niryo_one_driver/change_hardware_version.h
   ${CMAKE_CURRENT_LIST_DIR}/include/niryo_one_driver/communication_base.h
   ${CMAKE_CURRENT_LIST_DIR}/include/niryo_one_driver/dxl_communication.h
   ${CMAKE_CURRENT_LIST_DIR}/include/niryo_one_driver/dxl_driver.h
   ${CMAKE_CURRENT_LIST_DIR}/include/niryo_one_driver/dxl_motor_state.h
-  ${CMAKE_CURRENT_LIST_DIR}/include/niryo_one_driver/fake_communication.h
   ${CMAKE_CURRENT_LIST_DIR}/include/niryo_one_driver/motor_offset_file_handler.h
   ${CMAKE_CURRENT_LIST_DIR}/include/niryo_one_driver/niryo_one_can_driver.h
   ${CMAKE_CURRENT_LIST_DIR}/include/niryo_one_driver/niryo_one_communication.h
-  ${CMAKE_CURRENT_LIST_DIR}/include/niryo_one_driver/niryo_one_hardware_interface.h
-  ${CMAKE_CURRENT_LIST_DIR}/include/niryo_one_driver/ros_interface.h
   ${CMAKE_CURRENT_LIST_DIR}/include/niryo_one_driver/rpi_diagnostics.h
   ${CMAKE_CURRENT_LIST_DIR}/include/niryo_one_driver/stepper_motor_state.h
-  ${CMAKE_CURRENT_LIST_DIR}/include/niryo_one_driver/test_motors.h
   ${CMAKE_CURRENT_LIST_DIR}/include/niryo_one_driver/xl320_driver.h
   ${CMAKE_CURRENT_LIST_DIR}/include/niryo_one_driver/xl430_driver.h
 )

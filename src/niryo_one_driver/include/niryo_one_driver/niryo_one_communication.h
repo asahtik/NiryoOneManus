@@ -28,15 +28,13 @@
 
 #include "niryo_one_driver/communication_base.h"
 
-#include "niryo_one_driver/change_hardware_version.h"
-
 #include "ros_replacements/ros_time_repl.h"
 
 class NiryoOneCommunication : public CommunicationBase {
 
     public:
    
-        NiryoOneCommunication(int hardware_version);
+        NiryoOneCommunication();
         int init();
 
         void manageHardwareConnection();
@@ -65,27 +63,14 @@ class NiryoOneCommunication : public CommunicationBase {
         void requestNewCalibration();
         bool isCalibrationInProgress();
         
-        // // conveyor belt 
-        // int pingAndSetConveyor(uint8_t id, bool activate, std::string &message);
-        // int moveConveyor(uint8_t id, bool activate, int16_t speed, int8_t direction, std::string &message);
-        // int updateIdConveyor(uint8_t old_id, uint8_t new_id, std::string &message);
-        // void geCurrentConveyorStatus(int* status_conveyor_1 ,int* status_conveyor_2); 
-        // void getConveyorFeedBack(uint8_t conveyor_id, bool* connection_state, bool* running, int16_t* speed, int8_t* direction);
-
         // tools
         int pingAndSetDxlTool(uint8_t id, std::string name);
 
         int openGripper(uint8_t id, uint16_t open_position, uint16_t open_speed, uint16_t open_hold_torque);
         int closeGripper(uint8_t id, uint16_t close_position, uint16_t close_speed, uint16_t close_hold_torque, uint16_t close_max_torque);
         
-        int pullAirVacuumPump(uint8_t id, uint16_t pull_air_position, uint16_t pull_air_hold_torque);
-        int pushAirVacuumPump(uint8_t id, uint16_t push_air_position);
-        
         // steppers
         void synchronizeMotors(bool begin_traj);
-
-        // check hardware version (V1/V2)
-        void checkHardwareVersionFromDxlMotors();
         
         void addCustomDxlCommand(int motor_type, uint8_t id, uint32_t value,
                 uint32_t reg_address, uint32_t byte_number);
@@ -94,8 +79,6 @@ class NiryoOneCommunication : public CommunicationBase {
         bool scanAndCheckMotors();
 
     private:
-
-        int hardware_version;
 
         std::shared_ptr<CanCommunication> canComm;
         std::shared_ptr<DxlCommunication> dxlComm;
