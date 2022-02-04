@@ -36,3 +36,7 @@ void NiryoOneManusInterface::write() {
     // TODO: velocity not yet implemented on niryo's side
     comm->sendPositionToRobot(cmd);
 }
+
+void NiryoOneManusInterface::syncNextGoal(bool beginTrajectory) {
+    comm->synchronizeMotors(beginTrajectory);
+}

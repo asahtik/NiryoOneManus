@@ -7,6 +7,8 @@ public:
     void init();
     void read();
     void write();
+    // Call before setting new goal
+    void syncNextGoal(bool beginTrajectory);
 
     double pos[6] {0};
     double vel[6] {0};
