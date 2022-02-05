@@ -40,3 +40,26 @@ void NiryoOneManusInterface::write() {
 void NiryoOneManusInterface::syncNextGoal(bool beginTrajectory) {
     comm->synchronizeMotors(beginTrajectory);
 }
+
+void NiryoOneManusInterface::calibrate() {
+    comm->requestNewCalibration();
+
+    repl::sleep(1);
+
+    std::string err;
+    comm->allowMotorsCalibrationToStart(1, err);
+    OUTPUT_WARNING("%s", err.c_str());
+
+    repl::sleep(1);
+    // if (!mi->comm->isCalibrationInProgress()) mi->comm->requestNewCalibration();
+    while (comm->isCalibrationInProgress()) repl::sleep(0.25);
+
+    repl::sleep(1);
+
+    comm->activateLearningMode(false);
+
+    repl::sleep(1);
+
+    OUTPUT_INFO("Torque enabled");
+
+};
