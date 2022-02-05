@@ -8,6 +8,7 @@ set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 include(CPack)
 
 add_subdirectory(src/ros_replacements)
+add_subdirectory(src/utils)
 add_subdirectory(src/dynamixel_sdk)
 add_subdirectory(src/mcp_can_rpi)
 add_subdirectory(src/niryo_one_driver)
