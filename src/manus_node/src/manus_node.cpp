@@ -1,28 +1,28 @@
 #include "manus_node/manus_node.h"
 
-NiryoOneManipulator::NiryoOneManipulator(const NiryoOneManusInterface* mi, const string& device, const string& model, const string& servos) {
-    
-}
+// NiryoOneManipulator::NiryoOneManipulator(const NiryoOneManusInterface* mi, const string& device, const string& model, const string& servos) {
+//     // TODO: Not yet implemented
+// }
 
-NiryoOneManipulator::~NiryoOneManipulator() {
+// NiryoOneManipulator::~NiryoOneManipulator() {
+//     // TODO: Not yet implemented
+// }
 
-}
+// int NiryoOneManipulator::size() {
+//     // TODO: Not yet implemented
+// }
 
-int NiryoOneManipulator::size() {
+// bool NiryoOneManipulator::move(int joint, float position, float speed) {
+//     // TODO: Not yet implemented
+// }
 
-}
+// ManipulatorDescription NiryoOneManipulator::describe() {
+//     // TODO: Not yet implemented
+// }
 
-bool NiryoOneManipulator::move(int joint, float position, float speed) {
-
-}
-
-ManipulatorDescription NiryoOneManipulator::describe() {
-
-}
-
-ManipulatorState NiryoOneManipulator::state() {
-    
-}
+// ManipulatorState NiryoOneManipulator::state() {
+//     // TODO: Not yet implemented
+// }
 
 void btnPressedISR() {
     btnPressState = true;
@@ -35,7 +35,7 @@ int main(int argc, char** argv) {
 
     change_led(false, false, true);
 
-    auto mi = std::shared_ptr(new NiryoOneManusInterface());
+    auto mi = std::shared_ptr<NiryoOneManusInterface>(new NiryoOneManusInterface());
     mi->init();
 
     pinMode(BTN_PIN, INPUT);
@@ -49,7 +49,7 @@ int main(int argc, char** argv) {
 
     change_led(false, true, false);
 
-    // TODO: while loop
+    // TODO: init manipulator stuff + while loop
 
     // TODO: on exit go to 0 and disable torque
 }

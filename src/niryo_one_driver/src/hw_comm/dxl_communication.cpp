@@ -22,22 +22,22 @@
 
 uint32_t DxlCommunication::rad_pos_to_xl320_pos(double position_rad)
 {
-    return (uint32_t) ((double)XL320_MIDDLE_POSITION + (position_rad * RADIAN_TO_DEGREE * (double)XL320_TOTAL_RANGE_POSITION) / (double) XL320_TOTAL_ANGLE );
+    return (uint32_t) ((double)XL320_MIDDLE_POSITION + (position_rad * RADIAN_TO_DEGREE_C * (double)XL320_TOTAL_RANGE_POSITION) / (double) XL320_TOTAL_ANGLE );
 }
 
 double DxlCommunication::xl320_pos_to_rad_pos(uint32_t position_dxl)
 {
-    return (double) ((((double)position_dxl - XL320_MIDDLE_POSITION) * (double)XL320_TOTAL_ANGLE) / (RADIAN_TO_DEGREE * (double)XL320_TOTAL_RANGE_POSITION));
+    return (double) ((((double)position_dxl - XL320_MIDDLE_POSITION) * (double)XL320_TOTAL_ANGLE) / (RADIAN_TO_DEGREE_C * (double)XL320_TOTAL_RANGE_POSITION));
 }
 
 uint32_t DxlCommunication::rad_pos_to_xl430_pos(double position_rad)
 {
-    return (uint32_t) ((double)XL430_MIDDLE_POSITION + (position_rad * RADIAN_TO_DEGREE * (double)XL430_TOTAL_RANGE_POSITION) / (double) XL430_TOTAL_ANGLE );
+    return (uint32_t) ((double)XL430_MIDDLE_POSITION + (position_rad * RADIAN_TO_DEGREE_C * (double)XL430_TOTAL_RANGE_POSITION) / (double) XL430_TOTAL_ANGLE );
 }
 
 double DxlCommunication::xl430_pos_to_rad_pos(uint32_t position_dxl)
 {
-    return (double) ((((double)position_dxl - XL430_MIDDLE_POSITION) * (double)XL430_TOTAL_ANGLE) / (RADIAN_TO_DEGREE * (double)XL430_TOTAL_RANGE_POSITION));
+    return (double) ((((double)position_dxl - XL430_MIDDLE_POSITION) * (double)XL430_TOTAL_ANGLE) / (RADIAN_TO_DEGREE_C * (double)XL430_TOTAL_RANGE_POSITION));
 }
 
 DxlCommunication::DxlCommunication()
@@ -99,7 +99,7 @@ int DxlCommunication::init()
     m6 = DxlMotorState("Servo Axis 6", DXL_MOTOR_6_ID, MOTOR_TYPE_XL320, XL320_MIDDLE_POSITION);
 
     // Enable motors
-    for (int i = 0 ; i < required_dxl_ids.size() ; i++) {
+    for (unsigned int i = 0 ; i < required_dxl_ids.size() ; i++) {
         if      (required_dxl_ids.at(i) == m4.getId()) { m4.enable(); }
         else if (required_dxl_ids.at(i) == m5.getId()) { m5.enable(); }
         else if (required_dxl_ids.at(i) == m6.getId()) { m6.enable(); }
@@ -219,7 +219,7 @@ void DxlCommunication::startHardwareControlLoop(bool limited_mode)
 
 void DxlCommunication::stopHardwareControlLoop()
 {
-    for (int i = 0; i < motors.size(); i++) {
+    for (unsigned int i = 0; i < motors.size(); i++) {
         motors.at(i)->resetState();
     }
     tool.resetState();
@@ -236,7 +236,7 @@ void DxlCommunication::hardwareControlRead()
     std::vector<DxlMotorState *> xl320_motor_list; 
     std::vector<DxlMotorState *> xl430_motor_list;
 
-    for (int i = 0; i < motors.size(); i++) {
+    for (unsigned int i = 0; i < motors.size(); i++) {
         if (motors.at(i)->isEnabled()) {
             if (motors.at(i)->getType() == MOTOR_TYPE_XL320) {
                 xl320_id_list.push_back(motors.at(i)->getId());
@@ -275,7 +275,7 @@ void DxlCommunication::hardwareControlRead()
                 int read_position_result = xl320->syncReadPosition(xl320_id_list, position_list);
                 if (read_position_result == COMM_SUCCESS) {
                     xl320_hw_fail_counter_read = 0;
-                    for (int i = 0; i < xl320_motor_list.size(); i++) {
+                    for (unsigned int i = 0; i < xl320_motor_list.size(); i++) {
                         xl320_motor_list.at(i)->setPositionState(position_list.at(i));
                     }
                 }
@@ -290,7 +290,7 @@ void DxlCommunication::hardwareControlRead()
                 int read_position_result = xl430->syncReadPosition(xl430_id_list, position_list);
                 if (read_position_result == COMM_SUCCESS) {
                     xl430_hw_fail_counter_read = 0;
-                    for (int i = 0; i < xl430_motor_list.size(); i++) {
+                    for (unsigned int i = 0; i < xl430_motor_list.size(); i++) {
                         xl430_motor_list.at(i)->setPositionState(position_list.at(i));
                     }
                 }
@@ -307,7 +307,7 @@ void DxlCommunication::hardwareControlRead()
                 int read_velocity_result = xl320->syncReadVelocity(xl320_id_list, velocity_list);
                 if (read_velocity_result == COMM_SUCCESS) {
                     xl320_hw_fail_counter_read = 0;
-                    for (int i = 0; i < xl320_motor_list.size(); i++) {
+                    for (unsigned int i = 0; i < xl320_motor_list.size(); i++) {
                         xl320_motor_list.at(i)->setVelocityState(velocity_list.at(i));
                     }
                 }
@@ -321,7 +321,7 @@ void DxlCommunication::hardwareControlRead()
                 int read_velocity_result = xl430->syncReadVelocity(xl430_id_list, velocity_list);
                 if (read_velocity_result == COMM_SUCCESS) {
                     xl430_hw_fail_counter_read = 0;
-                    for (int i = 0; i < xl430_motor_list.size(); i++) {
+                    for (unsigned int i = 0; i < xl430_motor_list.size(); i++) {
                         xl430_motor_list.at(i)->setVelocityState(velocity_list.at(i));
                     }
                 }
@@ -338,7 +338,7 @@ void DxlCommunication::hardwareControlRead()
                 int read_torque_result = xl320->syncReadLoad(xl320_id_list, torque_list);
                 if (read_torque_result == COMM_SUCCESS) {
                     xl320_hw_fail_counter_read = 0;
-                    for (int i = 0; i < xl320_motor_list.size(); i++) {
+                    for (unsigned int i = 0; i < xl320_motor_list.size(); i++) {
                         xl320_motor_list.at(i)->setTorqueState(torque_list.at(i));
                     }
                 }
@@ -352,7 +352,7 @@ void DxlCommunication::hardwareControlRead()
                 int read_torque_result = xl430->syncReadLoad(xl430_id_list, torque_list);
                 if (read_torque_result == COMM_SUCCESS) {
                     xl430_hw_fail_counter_read = 0;
-                    for (int i = 0; i < xl430_motor_list.size(); i++) {
+                    for (unsigned int i = 0; i < xl430_motor_list.size(); i++) {
                         xl430_motor_list.at(i)->setTorqueState(torque_list.at(i));
                     }
                 }
@@ -375,7 +375,7 @@ void DxlCommunication::hardwareControlRead()
                 int read_temperature_result = xl320->syncReadTemperature(xl320_id_list, temperature_list);
                 if (read_temperature_result == COMM_SUCCESS) {
                     xl320_hw_fail_counter_read = 0;
-                    for (int i = 0; i < xl320_motor_list.size(); i++) {
+                    for (unsigned int i = 0; i < xl320_motor_list.size(); i++) {
                         xl320_motor_list.at(i)->setTemperatureState(temperature_list.at(i));
                     }
                 }
@@ -389,7 +389,7 @@ void DxlCommunication::hardwareControlRead()
                 int read_temperature_result = xl430->syncReadTemperature(xl430_id_list, temperature_list);
                 if (read_temperature_result == COMM_SUCCESS) {
                     xl430_hw_fail_counter_read = 0;
-                    for (int i = 0; i < xl430_motor_list.size(); i++) {
+                    for (unsigned int i = 0; i < xl430_motor_list.size(); i++) {
                         xl430_motor_list.at(i)->setTemperatureState(temperature_list.at(i));
                     }
                 }
@@ -404,7 +404,7 @@ void DxlCommunication::hardwareControlRead()
                 int read_voltage_result = xl320->syncReadVoltage(xl320_id_list, voltage_list);
                 if (read_voltage_result == COMM_SUCCESS) {
                     xl320_hw_fail_counter_read = 0;
-                    for (int i = 0; i < xl320_motor_list.size(); i++) {
+                    for (unsigned int i = 0; i < xl320_motor_list.size(); i++) {
                         xl320_motor_list.at(i)->setVoltageState(voltage_list.at(i));
                     }
                 }
@@ -418,7 +418,7 @@ void DxlCommunication::hardwareControlRead()
                 int read_voltage_result = xl430->syncReadVoltage(xl430_id_list, voltage_list);
                 if (read_voltage_result == COMM_SUCCESS) {
                     xl430_hw_fail_counter_read = 0;
-                    for (int i = 0; i < xl430_motor_list.size(); i++) {
+                    for (unsigned int i = 0; i < xl430_motor_list.size(); i++) {
                         xl430_motor_list.at(i)->setVoltageState(voltage_list.at(i));
                     }
                 }
@@ -433,7 +433,7 @@ void DxlCommunication::hardwareControlRead()
                 int read_hw_error_result = xl320->syncReadHwErrorStatus(xl320_id_list, hw_error_list);
                 if (read_hw_error_result == COMM_SUCCESS) {
                     xl320_hw_fail_counter_read = 0;
-                    for (int i = 0; i < xl320_motor_list.size(); i++) {
+                    for (unsigned int i = 0; i < xl320_motor_list.size(); i++) {
                         xl320_motor_list.at(i)->setHardwareError(hw_error_list.at(i));
                     }
                 }
@@ -447,7 +447,7 @@ void DxlCommunication::hardwareControlRead()
                 int read_hw_error_result = xl430->syncReadHwErrorStatus(xl430_id_list, hw_error_list);
                 if (read_hw_error_result == COMM_SUCCESS) {
                     xl430_hw_fail_counter_read = 0;
-                    for (int i = 0; i < xl430_motor_list.size(); i++) {
+                    for (unsigned int i = 0; i < xl430_motor_list.size(); i++) {
                         xl430_motor_list.at(i)->setHardwareError(hw_error_list.at(i));
                     }
                 }
@@ -477,7 +477,7 @@ void DxlCommunication::hardwareControlWrite()
     std::vector<DxlMotorState *> xl320_motor_list; 
     std::vector<DxlMotorState *> xl430_motor_list;
 
-    for (int i = 0; i < motors.size(); i++) {
+    for (unsigned int i = 0; i < motors.size(); i++) {
         if (motors.at(i)->isEnabled()) {
             if (motors.at(i)->getType() == MOTOR_TYPE_XL320) {
                 xl320_id_list.push_back(motors.at(i)->getId());
@@ -495,7 +495,7 @@ void DxlCommunication::hardwareControlWrite()
     // Same command for xl320 and xl430 (depends on protocol,
     // not motor type)
     if (should_reboot_motors) {
-        for (int i = 0; i < motors.size(); i++) {
+        for (unsigned int i = 0; i < motors.size(); i++) {
             OUTPUT_WARNING("Reboot Dxl motor with ID: %d", (int)motors.at(i)->getId());
             xl430->reboot(motors.at(i)->getId());
         }
@@ -543,7 +543,7 @@ void DxlCommunication::hardwareControlWrite()
         if (write_torque_on_enable)
         {
             std::vector<uint32_t> xl320_torque_enable_list;
-            for (int i = 0; i < xl320_motor_list.size(); i++) {
+            for (unsigned int i = 0; i < xl320_motor_list.size(); i++) {
                 xl320_torque_enable_list.push_back(torque_on); 
             }
 
@@ -553,7 +553,7 @@ void DxlCommunication::hardwareControlWrite()
             }
 
             std::vector<uint32_t> xl430_torque_enable_list;
-            for (int i = 0; i < xl430_motor_list.size(); i++) {
+            for (unsigned int i = 0; i < xl430_motor_list.size(); i++) {
                 xl430_torque_enable_list.push_back(torque_on);
             }
 
@@ -576,12 +576,12 @@ void DxlCommunication::hardwareControlWrite()
             // write position (not for tool)
             if (write_position_enable) {
                 std::vector<uint32_t> xl320_position_list;
-                for (int i = 0; i < xl320_motor_list.size(); i++) {
+                for (unsigned int i = 0; i < xl320_motor_list.size(); i++) {
                     xl320_position_list.push_back(xl320_motor_list.at(i)->getPositionCommand());
                 }
 
                 std::vector<uint32_t> xl430_position_list;
-                for (int i = 0; i < xl430_motor_list.size(); i++) {
+                for (unsigned int i = 0; i < xl430_motor_list.size(); i++) {
                     xl430_position_list.push_back(xl430_motor_list.at(i)->getPositionCommand());
                 }
 
@@ -596,12 +596,12 @@ void DxlCommunication::hardwareControlWrite()
             // write velocity (not for tool)
             if (write_velocity_enable) {
                 std::vector<uint32_t> xl320_velocity_list;
-                for (int i = 0; i < xl320_motor_list.size(); i++) {
+                for (unsigned int i = 0; i < xl320_motor_list.size(); i++) {
                     xl320_velocity_list.push_back(xl320_motor_list.at(i)->getVelocityCommand());
                 }
 
                 std::vector<uint32_t> xl430_velocity_list;
-                for (int i = 0; i < xl430_motor_list.size(); i++) {
+                for (unsigned int i = 0; i < xl430_motor_list.size(); i++) {
                     xl430_velocity_list.push_back(xl430_motor_list.at(i)->getVelocityCommand());
                 }
 
@@ -616,12 +616,12 @@ void DxlCommunication::hardwareControlWrite()
             // write torque (not for tool)
             if (write_torque_enable) {
                 std::vector<uint32_t> xl320_torque_list;
-                for (int i = 0; i < xl320_motor_list.size(); i++) {
+                for (unsigned int i = 0; i < xl320_motor_list.size(); i++) {
                     xl320_torque_list.push_back(xl320_motor_list.at(i)->getTorqueCommand());
                 }
 
                 std::vector<uint32_t> xl430_torque_list;
-                for (int i = 0; i < xl430_motor_list.size(); i++) {
+                for (unsigned int i = 0; i < xl430_motor_list.size(); i++) {
                     xl430_torque_list.push_back(xl430_motor_list.at(i)->getTorqueCommand());
                 }
 
@@ -655,7 +655,7 @@ void DxlCommunication::hardwareControlWrite()
 
         if (write_led_enable) {
             std::vector<uint32_t> xl320_led_list;
-            for (int i = 0; i < xl320_motor_list.size(); i++) {
+            for (unsigned int i = 0; i < xl320_motor_list.size(); i++) {
                 xl320_led_list.push_back(xl320_motor_list.at(i)->getLedCommand());
             }
 
@@ -715,7 +715,7 @@ void DxlCommunication::moveAllMotorsToHomePosition()
     m6.setPositionCommand(XL320_MIDDLE_POSITION);
 
     // if motor disabled, pos_state = pos_cmd (echo position)
-    for (int i = 0 ; i < motors.size(); i++) {
+    for (unsigned int i = 0 ; i < motors.size(); i++) {
         if (!motors.at(i)->isEnabled()) {
             motors.at(i)->setPositionState(motors.at(i)->getPositionCommand());
         }
@@ -741,7 +741,7 @@ void DxlCommunication::setGoalPositionV2(double axis_4_pos, double axis_5_pos, d
     m6.setPositionCommand(rad_pos_to_xl320_pos(axis_6_pos));
     
     // if motor disabled, pos_state = pos_cmd (echo position)
-    for (int i = 0 ; i < motors.size(); i++) {
+    for (unsigned int i = 0 ; i < motors.size(); i++) {
         if (!motors.at(i)->isEnabled()) {
             motors.at(i)->setPositionState(motors.at(i)->getPositionCommand());
         }
@@ -772,7 +772,7 @@ void DxlCommunication::getHardwareStatus(bool *is_connection_ok, std::string &er
     voltages.clear();
     hw_errors.clear();
 
-    for (int i = 0; i < motors.size(); i++) {
+    for (unsigned int i = 0; i < motors.size(); i++) {
         if (motors.at(i)->isEnabled()) {
             motor_names.push_back(motors.at(i)->getName());
             if (motors.at(i)->getType() == MOTOR_TYPE_XL320) {
@@ -822,7 +822,7 @@ void DxlCommunication::setLeds(std::vector<int> &leds)
 
     int index_counter = 0;
 
-    for (int i = 0; i < motors.size(); i++) {
+    for (unsigned int i = 0; i < motors.size(); i++) {
         if (motors.at(i)->isEnabled()) {
             if (leds.at(index_counter) >= 0 && leds.at(index_counter) <= 7) {
                 motors.at(i)->setLedCommand(leds.at(index_counter));
@@ -987,14 +987,14 @@ int DxlCommunication::scanAndCheck()
 
     // 1.1 Log all IDs found for debug purposes
     OUTPUT_INFO("Dynamixel broadcast ping - Found IDs:");
-    for (int i = 0; i < id_list.size(); i++) {
+    for (unsigned int i = 0; i < id_list.size(); i++) {
         OUTPUT_INFO("- %d", id_list.at(i));
     }
 
     // 2. Check that ids correspond to niryo_one motors id list
     std::vector<uint8_t> missing_motor_ids;
     
-    for (int i = 0; i < required_motors_ids.size(); i++) {
+    for (unsigned int i = 0; i < required_motors_ids.size(); i++) {
         if (std::find(id_list.begin(), id_list.end(), required_motors_ids.at(i)) == id_list.end()) {
             missing_motor_ids.push_back(required_motors_ids.at(i));
         }
@@ -1008,7 +1008,7 @@ int DxlCommunication::scanAndCheck()
     
     if (missing_motor_ids.size() > 0) {
         debug_error_message = "Missing Dynamixel motor(s) on the robot : ";
-        for (int i = 0; i < motors.size(); i++) {
+        for (unsigned int i = 0; i < motors.size(); i++) {
             if (std::find(missing_motor_ids.begin(), missing_motor_ids.end(), motors.at(i)->getId()) != missing_motor_ids.end()) {
                 debug_error_message += motors.at(i)->getName();
                 debug_error_message += ", ";
@@ -1026,7 +1026,7 @@ int DxlCommunication::scanAndCheck()
     // 3. Check that there is no unwanted motor
     std::vector<uint8_t> unallowed_motor_ids;
 
-    for (int i = 0; i < id_list.size(); i++) {
+    for (unsigned int i = 0; i < id_list.size(); i++) {
         if (std::find(allowed_motors_ids.begin(), allowed_motors_ids.end(), id_list.at(i)) == allowed_motors_ids.end()) {
             unallowed_motor_ids.push_back(id_list.at(i));
         }
@@ -1034,7 +1034,7 @@ int DxlCommunication::scanAndCheck()
 
     if (unallowed_motor_ids.size() > 0) {
         debug_error_message = "Unallowed Dynamixel motor(s) on the robot : ";
-        for (int i = 0; i < unallowed_motor_ids.size(); i++) {
+        for (unsigned int i = 0; i < unallowed_motor_ids.size(); i++) {
             debug_error_message += std::to_string(unallowed_motor_ids.at(i));
             if (i != unallowed_motor_ids.size() - 1) {
                 debug_error_message += ", ";
@@ -1084,7 +1084,7 @@ int DxlCommunication::detectVersion()
 
     // 1.1 Log all IDs found for debug purposes
     OUTPUT_INFO("Dynamixel broadcast ping - Found IDs:");
-    for (int i = 0; i < id_list.size(); i++) {
+    for (unsigned int i = 0; i < id_list.size(); i++) {
         OUTPUT_INFO("- %d", id_list.at(i));
     }
 

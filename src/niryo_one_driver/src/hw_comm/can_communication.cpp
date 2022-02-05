@@ -22,12 +22,12 @@
 
 int32_t CanCommunication::rad_pos_to_steps(double position_rad, double gear_ratio, double direction)
 {
-    return (int32_t) ((200.0 * 8.0 * gear_ratio * position_rad * RADIAN_TO_DEGREE / 360.0) * direction);
+    return (int32_t) ((200.0 * 8.0 * gear_ratio * position_rad * RADIAN_TO_DEGREE_C / 360.0) * direction);
 }
 
 double CanCommunication::steps_to_rad_pos(int32_t steps, double gear_ratio, double direction)
 {
-    return (double) ((double)steps * 360.0 / (200.0 * 8.0 * gear_ratio * RADIAN_TO_DEGREE)) * direction ;
+    return (double) ((double)steps * 360.0 / (200.0 * 8.0 * gear_ratio * RADIAN_TO_DEGREE_C)) * direction ;
 }
 
 CanCommunication::CanCommunication()
@@ -130,7 +130,7 @@ int CanCommunication::init()
     offset_position_4 = 2.791;
     OUTPUT_INFO("Angle offsets : (1 : %lf, 2 : %lf, 3 : %lf, 4 : %lf)", offset_position_1, offset_position_2, offset_position_3, offset_position_4);
 
-    double direction_1, direction_2, direction_3, direction_4;
+    double direction_1, direction_2, direction_3;
     // TODO: get params
     // ros::param::get("/niryo_one/motors/stepper_1_direction", direction_1);
     direction_1 = -1.0;
@@ -138,10 +138,8 @@ int CanCommunication::init()
     direction_2 = -1.0;
     // ros::param::get("/niryo_one/motors/stepper_3_direction", direction_3);
     direction_3 = 1.0;
-    // ros::param::get("/niryo_one/motors/stepper_4_direction", direction_4);
-    direction_4 = -1.0;
 
-    int max_effort_1, max_effort_2, max_effort_3, max_effort_4, max_effort_6, max_effort_7;
+    int max_effort_1, max_effort_2, max_effort_3;
     // TODO: get params
     // ros::param::get("/niryo_one/motors/stepper_1_max_effort", max_effort_1);
     max_effort_1 = 90;
@@ -149,12 +147,6 @@ int CanCommunication::init()
     max_effort_2 = 130;
     // ros::param::get("/niryo_one/motors/stepper_3_max_effort", max_effort_3);
     max_effort_3 = 120;
-    // ros::param::get("/niryo_one/motors/stepper_4_max_effort", max_effort_4);
-    max_effort_4 = 90;
-    // ros::param::get("/niryo_one/motors/stepper_6_max_effort", max_effort_6);
-    max_effort_6 = 90;
-    // ros::param::get("/niryo_one/motors/stepper_7_max_effort", max_effort_7);
-    max_effort_7 = 90;
 
     // Create motors with previous params
     m1 = StepperMotorState("Stepper Axis 1", CAN_MOTOR_1_ID, gear_ratio_1, direction_1,
@@ -278,7 +270,7 @@ void CanCommunication::startHardwareControlLoop(bool limited_mode)
 void CanCommunication::stopHardwareControlLoop()
 {
     OUTPUT_INFO("Stop hardware control loop");
-    for (int i = 0; i < motors.size(); i++) {
+    for (unsigned int i = 0; i < motors.size(); i++) {
         motors.at(i)->resetState();
     }
     hw_control_loop_keep_alive = false;
@@ -308,7 +300,7 @@ void CanCommunication::hardwareControlRead()
         
         // treat niryo one steppers
         bool motor_found = false;
-        for (int i = 0; i < allowed_motors.size(); i++) {
+        for (unsigned int i = 0; i < allowed_motors.size(); i++) {
             if (motor_id == allowed_motors.at(i)->getId()){
                 allowed_motors.at(i)->setLastTimeRead(repl::time_now());
                 motor_found = true;
@@ -346,7 +338,7 @@ void CanCommunication::hardwareControlRead()
           	}
 
             // fill data
-            for (int i = 0; i < motors.size() ; i++) {
+            for (unsigned int i = 0; i < motors.size() ; i++) {
                 if (motor_id == motors.at(i)->getId() && motors.at(i)->isEnabled()) {
                     motors.at(i)->setPositionState(pos);
                     break;
@@ -359,7 +351,6 @@ void CanCommunication::hardwareControlRead()
                 OUTPUT_ERROR("Diagnostic can frame should contain 4 data bytes");
                 return;
             }
-            int mode = rxBuf[1];
             int driver_temp_raw = (rxBuf[2] << 8) + rxBuf[3];
             double a = -0.00316;
             double b = -12.924;
@@ -368,13 +359,12 @@ void CanCommunication::hardwareControlRead()
             int driver_temp = int((-b - std::sqrt(b*b - 4*a*(c - v_temp)))/(2*a)+30);
 
             // fill data
-            for (int i = 0; i < motors.size() ; i++) {
+            for (unsigned int i = 0; i < motors.size() ; i++) {
                 if (motor_id == motors.at(i)->getId() && motors.at(i)->isEnabled()) {
                     motors.at(i)->setTemperatureState(driver_temp);
                     break;
                 }
             }
-            //ROS_INFO("Mode : %d, Temp : %d", mode, m1.getTemperatureState());
         }
         else if (control_byte == CAN_DATA_FIRMWARE_VERSION) {
             if (len != 4) {
@@ -390,7 +380,7 @@ void CanCommunication::hardwareControlRead()
             version += std::to_string(v_patch);
 
             // fill data
-            for (int i = 0; i < motors.size(); i++) {
+            for (unsigned int i = 0; i < motors.size(); i++) {
                 if (motor_id == motors.at(i)->getId() && allowed_motors.at(i)->isEnabled()) {
                     motors.at(i)->setFirmwareVersion(version);
                     return;
@@ -427,7 +417,7 @@ void CanCommunication::hardwareControlWrite()
         if (write_synchronize_enable) {
             bool synchronize_write_success = true;
 
-            for (int i = 0 ; i < motors.size(); i++) {
+            for (unsigned int i = 0 ; i < motors.size(); i++) {
                 if (motors.at(i)->isEnabled()) {
                     if (can->sendSynchronizePositionCommand(motors.at(i)->getId(), write_synchronize_begin_traj) != CAN_OK) {
                         synchronize_write_success = false;
@@ -447,7 +437,7 @@ void CanCommunication::hardwareControlWrite()
         if (write_position_enable) {
 
 
-            for (int i = 0 ; i < motors.size(); i++) {
+            for (unsigned int i = 0 ; i < motors.size(); i++) {
                 if (motors.at(i)->isEnabled()) {
 
                     if (can->sendPositionCommand(motors.at(i)->getId(), motors.at(i)->getPositionCommand()) != CAN_OK) {
@@ -461,7 +451,7 @@ void CanCommunication::hardwareControlWrite()
         // write micro steps
         if (write_micro_steps_enable) {
             bool micro_steps_write_success = true;
-            for (int i = 0 ; i < motors.size(); i++) {
+            for (unsigned int i = 0 ; i < motors.size(); i++) {
                 if (motors.at(i)->isEnabled()) {
                     if (can->sendMicroStepsCommand(motors.at(i)->getId(), motors.at(i)->getMicroStepsCommand()) != CAN_OK) {
                         micro_steps_write_success = false;
@@ -481,7 +471,7 @@ void CanCommunication::hardwareControlWrite()
         if (write_max_effort_enable) {
             bool max_effort_write_success = true;
 
-            for (int i = 0; i < motors.size(); i++) {
+            for (unsigned int i = 0; i < motors.size(); i++) {
                 if (motors.at(i)->isEnabled()) {
                     if (can->sendMaxEffortCommand(motors.at(i)->getId(), motors.at(i)->getMaxEffortCommand()) != CAN_OK) {
                         max_effort_write_success = false;
@@ -516,7 +506,7 @@ void CanCommunication::hardwareControlCheckConnection()
         auto timeout_read = repl::sec_to_usec(1.0/hw_check_connection_frequency);
         int max_fail_counter = (int) (hw_check_connection_frequency + 0.5); // connection error will be detected after 1 sec
 
-        for (int i = 0; i < motors.size(); i++) {
+        for (unsigned int i = 0; i < motors.size(); i++) {
             if (motors.at(i)->isEnabled()) {
                 if (time_now - motors.at(i)->getLastTimeRead() > timeout_read * (motors.at(i)->getHwFailCounter() + 1)) {
                     OUTPUT_ERROR("CAN connection problem with motor %d, hw fail counter : %d", motors.at(i)->getId(), motors.at(i)->getHwFailCounter());
@@ -607,7 +597,7 @@ void CanCommunication::setTorqueOn(bool on)
 bool CanCommunication::canProcessManualCalibration(std::string &result_message)
 {
     // 1. Check if motors firmware version is ok
-    for (int i = 0; i < motors.size(); i++) {
+    for (unsigned int i = 0; i < motors.size(); i++) {
         if (motors.at(i)->isEnabled()) {
             std::string firmware_version = motors.at(i)->getFirmwareVersion();
             if (firmware_version.length() == 0) {
@@ -634,9 +624,9 @@ bool CanCommunication::canProcessManualCalibration(std::string &result_message)
     }
 
     // 3. Check if all connected motors have a motor offset value
-    for (int i = 0; i < motors.size(); i++) {
+    for (unsigned int i = 0; i < motors.size(); i++) {
         if (motors.at(i)->isEnabled()) {
-            for (int j = 0; j < motor_id_list.size(); j++) {
+            for (unsigned int j = 0; j < motor_id_list.size(); j++) {
                 if (motor_id_list.at(j) == motors.at(i)->getId()) {
                     break;
                 }
@@ -715,6 +705,8 @@ int CanCommunication::calibrateMotors(int calibration_step)
             int result = autoCalibrationStep2();
             calibration_in_progress = false;
             return result;
+        } else {
+            return CAN_STEPPERS_CALIBRATION_FAIL;
         }
     }
     else {
@@ -743,14 +735,14 @@ int CanCommunication::manualCalibration()
         return CAN_STEPPERS_CALIBRATION_FAIL;
     }
 
-    for (int i = 0; i < motors.size(); i++) {
+    for (unsigned int i = 0; i < motors.size(); i++) {
         if (motors.at(i)->isEnabled()) {
             // compute step offset to send
             int offset_to_send = 0;
             int sensor_offset_steps = 0;
             int absolute_steps_at_offset_position = 0;
             int offset_steps = motors.at(i)->getOffsetPosition();
-            for (int j = 0; j < motor_id_list.size(); j++) {
+            for (unsigned int j = 0; j < motor_id_list.size(); j++) {
                 if (motors.at(i)->getId() == motor_id_list.at(j)) {
                     sensor_offset_steps = steps_list.at(j);
                     break;
@@ -798,7 +790,7 @@ int CanCommunication::getCalibrationResults(std::vector<StepperMotorState*> step
     std::vector<int> motors_ids;
     std::vector<bool> calibration_results;
 
-    for (int i = 0 ; i < steppers.size() ; i++) {
+    for (unsigned int i = 0 ; i < steppers.size() ; i++) {
         if (steppers.at(i)->isEnabled()) {
             motors_ids.push_back(steppers.at(i)->getId());
             calibration_results.push_back(false);
@@ -815,7 +807,7 @@ int CanCommunication::getCalibrationResults(std::vector<StepperMotorState*> step
 
         // check if success
         bool success = true;
-        for (int i = 0 ; i < calibration_results.size() ; i++) {
+        for (unsigned int i = 0 ; i < calibration_results.size() ; i++) {
             if (calibration_results.at(i) == false) {
                 success = false;
             }
@@ -836,7 +828,7 @@ int CanCommunication::getCalibrationResults(std::vector<StepperMotorState*> step
 
             // 2. Check if motor id is in array
 
-            for (int i = 0 ; i < motors_ids.size() ; i++) {
+            for (unsigned int i = 0 ; i < motors_ids.size() ; i++) {
                 if (motors_ids.at(i) == motor_id) {
                     if (len == 2) {
                         // 3. Check control byte
@@ -929,8 +921,6 @@ int CanCommunication::relativeMoveMotor(StepperMotorState* motor, int steps, int
 
 int CanCommunication::autoCalibrationStep1()
 {
-    int result;
-
     // 0. Torque ON for motor 2
     if (can->sendTorqueOnCommand(m2.getId(), true) != CAN_OK) {
         return CAN_STEPPERS_CALIBRATION_FAIL;
@@ -946,7 +936,6 @@ int CanCommunication::autoCalibrationStep1()
 
 int CanCommunication::autoCalibrationStep2()
 {
-    int result;
     std::vector<int> sensor_offset_ids;
     std::vector<int> sensor_offset_steps; // absolute steps at offset position
 
@@ -964,19 +953,14 @@ int CanCommunication::autoCalibrationStep2()
     }
 
     // 2.1 Wait calibration result
-    std::vector<StepperMotorState*> steppers = { &m1, &m2, &m4 };
-    steppers.push_back(&m3);
+    std::vector<StepperMotorState*> steppers = { &m1, &m2, &m3 };
     
     if (getCalibrationResults(steppers, calibration_timeout, sensor_offset_ids, sensor_offset_steps) != CAN_STEPPERS_CALIBRATION_OK) {
         return CAN_STEPPERS_CALIBRATION_FAIL;
     }
 
-    // 3. Move motor 1,2,4 to 0.0
-    int delay_micros = 2000;
+    // 3. Move motor 1,2 to 0.0
     if (relativeMoveMotor(&m1, -m1.getOffsetPosition(), 1300, false) != CAN_OK) {
-        return CAN_STEPPERS_CALIBRATION_FAIL;
-    }
-    if (relativeMoveMotor(&m4, -m4.getOffsetPosition(), 1500, false) != CAN_OK) {
         return CAN_STEPPERS_CALIBRATION_FAIL;
     }
 
@@ -1003,7 +987,7 @@ void CanCommunication::setGoalPositionV2(double axis_1_pos_goal, double axis_2_p
     m3.setPositionCommand(rad_pos_to_steps(axis_3_pos_goal, m3.getGearRatio(), m3.getDirection()));
 
     // if motor disabled, pos_state = pos_cmd (echo position)
-    for (int i = 0 ; i < motors.size(); i++) {
+    for (unsigned int i = 0 ; i < motors.size(); i++) {
         if (!motors.at(i)->isEnabled()) {
             motors.at(i)->setPositionState(motors.at(i)->getPositionCommand());
         }
@@ -1024,7 +1008,7 @@ void CanCommunication::setMicroSteps(std::vector<uint8_t> micro_steps_list)
         return;
     }
 
-    for (int i = 0; i < micro_steps_list.size(); i++) {
+    for (unsigned int i = 0; i < micro_steps_list.size(); i++) {
         motors.at(i)->setMicroStepsCommand(micro_steps_list.at(i));
     }
 
@@ -1038,7 +1022,7 @@ void CanCommunication::setMaxEffort(std::vector<uint8_t> max_effort_list)
         return;
     }
 
-    for (int i = 0; i < max_effort_list.size(); i++) {
+    for (unsigned int i = 0; i < max_effort_list.size(); i++) {
         motors.at(i)->setMaxEffortCommand(max_effort_list.at(i));
     }
 
@@ -1062,7 +1046,7 @@ void CanCommunication::getHardwareStatus(bool *is_connection_ok, std::string &er
     voltages.clear();
     hw_errors.clear();
 
-    for (int i = 0 ; i < motors.size(); i++) {
+    for (unsigned int i = 0 ; i < motors.size(); i++) {
         if (motors.at(i)->isEnabled()) {
             motor_names.push_back(motors.at(i)->getName());
             motor_types.push_back("Niryo Stepper");
@@ -1079,7 +1063,7 @@ void CanCommunication::getFirmwareVersions(std::vector<std::string> &motor_names
     motor_names.clear();
     firmware_versions.clear();
 
-    for (int i = 0; i < motors.size(); i++) {
+    for (unsigned int i = 0; i < motors.size(); i++) {
         if (motors.at(i)->isEnabled()) {
             motor_names.push_back(motors.at(i)->getName());
             firmware_versions.push_back(motors.at(i)->getFirmwareVersion());

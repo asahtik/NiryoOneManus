@@ -1,6 +1,6 @@
 #include "manus_interface/parse_description.h"
 
-JointDescription::JointDescription(JOINT_TYPE type, double tx, double ty, double tz, double rr, double rp, double ry, double min, double max) {
+CJointDescription::CJointDescription(JOINT_TYPE type, double tx, double ty, double tz, double rr, double rp, double ry, double min, double max) {
     this->type = type;
     this->tx = tx;
     this->ty = ty;    
@@ -18,14 +18,13 @@ JOINT_TYPE getJointType(std::string& type) {
     else return TOOL;
 }
 
-void parse_description(std::string& filename, std::vector<JointDescription>& jointsOut) {
+void parse_description(std::string& filename, std::vector<CJointDescription>& jointsOut) {
     YAML::Node file = YAML::LoadFile(filename);
 
     const YAML::Node& joints = file["joints"];
 
     jointsOut.clear();
-
-    int noJoints = joints.size();
+    
     for (const auto& joint : joints) {
         if (joint.IsDefined()) {
             const YAML::Node& transform = joint["transformation"];
@@ -38,7 +37,7 @@ void parse_description(std::string& filename, std::vector<JointDescription>& joi
             double ry = transform["ry"].as<double>();
             double min = joint["min"].as<double>();
             double max = joint["max"].as<double>();
-            jointsOut.push_back(JointDescription(getJointType(type), tx, ty, tz, rr, rp, ry, min, max));
+            jointsOut.push_back(CJointDescription(getJointType(type), tx, ty, tz, rr, rp, ry, min, max));
         }
     }
 }

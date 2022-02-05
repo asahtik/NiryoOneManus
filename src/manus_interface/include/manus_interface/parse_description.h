@@ -5,7 +5,7 @@
 
 enum JOINT_TYPE { ROTATIONAL, LINEAR, TOOL };
 
-class JointDescription {
+class CJointDescription {
 public:
     double tx, ty, tz;
     double rr, rp, ry;
@@ -14,7 +14,7 @@ public:
 
     JOINT_TYPE type;
 
-    JointDescription(JOINT_TYPE, double, double, double, double, double, double, double, double);
+    CJointDescription(JOINT_TYPE, double, double, double, double, double, double, double, double);
 };
 
-void parse_description(std::string, std::vector<JointDescription>&);
+void parse_description(std::string, std::vector<CJointDescription>&);

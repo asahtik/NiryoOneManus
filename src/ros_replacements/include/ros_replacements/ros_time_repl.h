@@ -3,14 +3,12 @@
 
 #ifndef REPL_TIME_H
 #define REPL_TIME_H
-
 #define clk std::chrono::steady_clock
-
 using namespace std::chrono;
 
 namespace repl {
-    typedef time_point<clk> Time;
-
+    typedef std::chrono::time_point<clk> Time;
+    
     extern microseconds sec_to_usec(double);
     extern Time time_now();
     extern void sleep(double);

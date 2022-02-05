@@ -17,22 +17,23 @@ bool calibrationRequested = false;
 int btnPressState = 0;
 void btnPressedISR();
 
-class NiryoOneManipulator : public Manipulator {
-public:
-    NiryoOneManipulator(const NiryoOneManusInterface* mi, const string& device, const string& model, const string& servos);
-	~NiryoOneManipulator();
+// TODO: Not yet implemented
+// class NiryoOneManipulator : public Manipulator {
+// public:
+//     NiryoOneManipulator(const NiryoOneManusInterface* mi, const string& device, const string& model, const string& servos);
+// 	~NiryoOneManipulator();
 
-	virtual int size();
-	virtual bool move(int joint, float position, float speed);
+// 	virtual int size();
+// 	virtual bool move(int joint, float position, float speed);
 
-	virtual ManipulatorDescription describe();
-	virtual ManipulatorState state();
-private:
-	NiryoOneManusInterface* mi;
-	std::vector<JointDescription> joints;
-};
+// 	virtual ManipulatorDescription describe();
+// 	virtual ManipulatorState state();
+// private:
+// 	NiryoOneManusInterface* mi;
+// 	std::vector<CJointDescription> joints;
+// };
 
-class NiryoOneManipulatorManager : public ManipulatorManager {
-private:
-    void step(bool force = false);
-};
+// class NiryoOneManipulatorManager : public ManipulatorManager {
+// private:
+//     void step(bool force = false);
+// };
