@@ -13,4 +13,4 @@ find_path(WPI_INCLUDE NAMES wiringPi.h REQUIRED)
 
 add_library(change_led ${SOURCES} ${HEADERS})
 target_link_libraries(change_led ${WPI_LIB})
-target_include_directories(change_led ${CMAKE_CURRENT_LIST_DIR}/include ${WPI_INCLUDE})
+target_include_directories(change_led PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include ${WPI_INCLUDE})
