@@ -53,12 +53,3 @@ int main(int argc, char** argv) {
 
     // TODO: on exit go to 0 and disable torque
 }
-
-
-    
-
-    
-
-    while (ok) {
-
-    }
