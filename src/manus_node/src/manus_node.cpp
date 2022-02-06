@@ -1,20 +1,30 @@
 #include "manus_node/manus_node.h"
 
-// NiryoOneManipulator::NiryoOneManipulator(const NiryoOneManusInterface* mi, const string& device, const string& model, const string& servos) {
-//     // TODO: Not yet implemented
-// }
+NiryoOneManipulator::rwCtrlLoop(std::shared_ptr<NiryoOneManusInterface> i, bool& notOk) {
+    repl::Rate r(100);
+    while (!notOk) {
+        i->read()
+        i->write();
+        r.sleep();
+    }
+}
 
-// NiryoOneManipulator::~NiryoOneManipulator() {
-//     // TODO: Not yet implemented
-// }
+NiryoOneManipulator::NiryoOneManipulator() {
+    loadDescription();
+    rwThread.reset(new std::thread(&rwCtrlLoop, mi, std::ref(shuttingDown)));
+}
 
-// int NiryoOneManipulator::size() {
-//     // TODO: Not yet implemented
-// }
+NiryoOneManipulator::~NiryoOneManipulator() {
+    shutdown();
+}
 
-// bool NiryoOneManipulator::move(int joint, float position, float speed) {
-//     // TODO: Not yet implemented
-// }
+int NiryoOneManipulator::size() {
+    return joints.size();
+}
+
+bool NiryoOneManipulator::move(int joint, float position, float speed) {
+    if (!shuttingDown) mi->cmd[joint] = position;
+}
 
 // ManipulatorDescription NiryoOneManipulator::describe() {
 //     // TODO: Not yet implemented
@@ -24,32 +34,112 @@
 //     // TODO: Not yet implemented
 // }
 
-void btnPressedISR() {
-    btnPressState = true;
+void NiryoOneManipulator::loadDescription() {
+    parse_description("model.yaml", joints);
+}
+
+void NiryoOneManipulatorManager::step(bool force) {
+    if (!plan) return;
+
+    bool idle = true;
+    bool goal = true;
+
+    ManipulatorState state = manipulator->state();
+    for (size_t i = 0; i < manipulator->size(); i++) {
+        idle &= state.joints[i].type == JOINTSTATETYPE_IDLE;
+        goal &= close_enough(state.joints[i].position, state.joints[i].goal);
+    }
+
+    if (goal || force) {
+
+        if (plan->segments.size() == 0) {
+            PlanState state;
+            state.identifier = plan->identifier;
+            state.type = PLANSTATETYPE_COMPLETED;
+            planstate_publisher->send(state);
+            plan.reset();
+
+            lastPlanSize = 0;
+            return;
+        }
+
+        mi->syncNextGoal(lastPlanSize == 0);
+        for (size_t i = 0; i < manipulator->size(); i++) {
+            manipulator->move(i, plan->segments[0].joints[i].goal, plan->segments[0].joints[i].speed);
+        }
+
+        plan->segments.erase(plan->segments.begin());
+    }
+}
+
+void shutdown() {
+    shuttingDown = true;
+    change_led(true, false, true);
+    mi->shutdown();
+    system("shutdown 0");
+}
+
+repl::Time last_pressed;
+void btnStateSwitchISR() {
+    bool btn = !(bool)digitalRead(BTN_PIN);
+    auto now = repl::time_now();
+    if (btn && noBtnPresses == 0) {
+        last_pressed = now;
+        btnPressed = true;
+    } else if (btn && (now - last_pressed) > repl::Millis(500)) {
+        last_pressed = now;
+        btnPressed = true;
+    } else if (!btn && (now - last_pressed) > repl::Millis(100)) {
+        btnPressed = false;
+        if ((now - last_pressed) > repl::Millis(5000)) {
+            shutdown();
+        } else if (noBtnPresses == 0) calibrationRequested = true;
+        ++noBtnPresses;
+    }
 }
 
 int main(int argc, char** argv) {
     OUTPUT_INFO("Starting up");
-
+    
+    last_pressed = repl::time_now();
     wiringPiSetupGpio();
 
     change_led(false, false, true);
 
-    auto mi = std::shared_ptr<NiryoOneManusInterface>(new NiryoOneManusInterface());
+    mi = std::shared_ptr<NiryoOneManusInterface>(new NiryoOneManusInterface());
     mi->init();
 
     pinMode(BTN_PIN, INPUT);
     pullUpDnControl(BTN_PIN, PUD_UP);
-    wiringPiISR(BTN_PIN, INT_EDGE_FALLING, &btnPressedISR);
+    wiringPiISR(BTN_PIN, INT_EDGE_FALLING, &btnStateSwitchISR);
 
     OUTPUT_INFO("Waiting for start of calibration");
-    while (!btnPressState) repl::sleep(0.5);
+    while (!calibrationRequested) repl::sleep(0.5);
 
     mi->calibrate();
 
     change_led(false, true, false);
 
-    // TODO: init manipulator stuff + while loop
+    try {
 
-    // TODO: on exit go to 0 and disable torque
+        std::shared_ptr<NiryoOneManipulator> manipulator(new NiryoOneManipulator());
+
+        SharedClient client = echolib::connect(string(), "manipulator");
+        ManipulatorManager manager(client, manipulator);
+
+        int duration = 0;
+
+        bool ok = true;
+        while (ok) {
+            if (!echolib::wait(20)) break;
+        }
+
+    } catch (ManipulatorException &e) {
+        cout << "Exception: " << e.what() << endl;
+        shutdown();
+        exit(1);
+    }
+
+    shutdown();
+    exit(0);
 }

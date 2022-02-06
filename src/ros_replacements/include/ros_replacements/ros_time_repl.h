@@ -8,6 +8,7 @@ using namespace std::chrono;
 
 namespace repl {
     typedef std::chrono::time_point<clk> Time;
+    typedef std::chrono::milliseconds Millis;
     
     extern microseconds sec_to_usec(double);
     extern Time time_now();

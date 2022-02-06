@@ -2,6 +2,7 @@
 #include "ros_replacements/status_output.h"
 
 NiryoOneManusInterface::NiryoOneManusInterface() {
+    rpiDiagnostics.reset(new RpiDiagnostics());
     comm.reset(new NiryoOneCommunication());
     int init_result = comm->init();
     if (init_result != 0) {
@@ -63,3 +64,12 @@ void NiryoOneManusInterface::calibrate() {
     OUTPUT_INFO("Torque enabled");
 
 };
+
+void NiryoOneManusInterface::shutdown() {
+    repl::sleep(2);
+    cmd[0] = 0; cmd[1] = 0; cmd[2] = 0; cmd[3] = 0; cmd[4] = 0; cmd[5] = 0; cmd[6] = 0;
+    write();
+    repl::sleep(10);
+    comm->activateLearningMode(true);
+    repl::sleep(10);
+}

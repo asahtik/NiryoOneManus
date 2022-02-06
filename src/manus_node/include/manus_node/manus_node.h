@@ -1,5 +1,8 @@
 #include <vector>
 #include <memory>
+#include <chrono>
+#include <thread>
+#include <stdlib.h>
 
 #include "manus/manipulator.h"
 #include "manus/files.h"
@@ -13,27 +16,37 @@
 #include "ros_replacements/status_output.h"
 
 const int BTN_PIN = 4;
-bool calibrationRequested = false;
-int btnPressState = 0;
-void btnPressedISR();
+volatile long noBtnPresses = 0;
+volatile bool calibrationRequested = false;
+volatile bool btnPressed = false;
+void btnStateSwitchISR();
 
-// TODO: Not yet implemented
-// class NiryoOneManipulator : public Manipulator {
-// public:
-//     NiryoOneManipulator(const NiryoOneManusInterface* mi, const string& device, const string& model, const string& servos);
-// 	~NiryoOneManipulator();
+volatile bool shuttingDown = false;
+void shutdown();
 
-// 	virtual int size();
-// 	virtual bool move(int joint, float position, float speed);
+std::shared_ptr<NiryoOneManusInterface> mi;
 
-// 	virtual ManipulatorDescription describe();
-// 	virtual ManipulatorState state();
-// private:
-// 	NiryoOneManusInterface* mi;
-// 	std::vector<CJointDescription> joints;
-// };
+volatile int lastPlanSize = 0;
 
-// class NiryoOneManipulatorManager : public ManipulatorManager {
-// private:
-//     void step(bool force = false);
-// };
+class NiryoOneManipulator : public Manipulator {
+public:
+    NiryoOneManipulator();
+	~NiryoOneManipulator();
+
+	virtual int size();
+	virtual bool move(int joint, float position, float speed);
+
+	// virtual ManipulatorDescription describe();
+	// virtual ManipulatorState state();
+private:
+    std::unique_ptr<std::thread> rwThread;
+	std::vector<CJointDescription> joints;
+
+    void rwCtrlLoop();
+    void loadDescription();
+};
+
+class NiryoOneManipulatorManager : public ManipulatorManager {
+private:
+    void step(bool force = false);
+};
