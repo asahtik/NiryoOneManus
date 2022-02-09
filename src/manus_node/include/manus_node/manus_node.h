@@ -42,7 +42,7 @@ private:
     std::unique_ptr<std::thread> rwThread;
 	std::vector<CJointDescription> joints;
 
-    void rwCtrlLoop();
+    void rwCtrlLoop(std::shared_ptr<NiryoOneManusInterface> i, bool& notOk);
     void loadDescription();
 };
 

@@ -27,7 +27,7 @@ void parse_description(std::string& filename, std::vector<CJointDescription>& jo
     
     for (const auto& joint : joints) {
         if (joint.IsDefined()) {
-            const YAML::Node& transform = joint["transformation"];
+            const YAML::Node& transform = joint["transform"];
             std::string type = joint["type"].as<std::string>();
             double tx = transform["tx"].as<double>();
             double ty = transform["ty"].as<double>();

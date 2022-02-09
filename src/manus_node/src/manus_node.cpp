@@ -1,9 +1,9 @@
 #include "manus_node/manus_node.h"
 
-NiryoOneManipulator::rwCtrlLoop(std::shared_ptr<NiryoOneManusInterface> i, bool& notOk) {
+void NiryoOneManipulator::rwCtrlLoop(std::shared_ptr<NiryoOneManusInterface> i, bool& notOk) {
     repl::Rate r(100);
     while (!notOk) {
-        i->read()
+        i->read();
         i->write();
         r.sleep();
     }
