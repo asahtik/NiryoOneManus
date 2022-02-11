@@ -2,6 +2,7 @@
 #include <memory>
 #include <chrono>
 #include <thread>
+#include <functional>
 #include <stdlib.h>
 
 #include "manus/manipulator.h"

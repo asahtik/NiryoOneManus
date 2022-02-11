@@ -107,7 +107,7 @@ int main(int argc, char** argv) {
 
     change_led(false, false, true);
 
-    mi = std::shared_ptr<NiryoOneManusInterface>(new NiryoOneManusInterface());
+    mi.reset(new NiryoOneManusInterface());
     mi->init();
 
     pinMode(BTN_PIN, INPUT);
