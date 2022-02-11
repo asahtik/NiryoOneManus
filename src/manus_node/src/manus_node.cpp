@@ -1,6 +1,6 @@
 #include "manus_node/manus_node.h"
 
-void rwCtrlLoop(std::shared_ptr<NiryoOneManusInterface> i, bool& notOk) {
+void rwCtrlLoop(std::shared_ptr<NiryoOneManusInterface> i, bool notOk) {
     repl::Rate r(100);
     while (!notOk) {
         i->read();

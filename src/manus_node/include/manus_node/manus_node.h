@@ -25,7 +25,7 @@ void btnStateSwitchISR();
 volatile bool shuttingDown = false;
 void shutdown();
 
-void rwCtrlLoop(std::shared_ptr<NiryoOneManusInterface> i, bool& notOk);
+void rwCtrlLoop(std::shared_ptr<NiryoOneManusInterface> i, bool notOk);
 
 std::shared_ptr<NiryoOneManusInterface> mi;
 
