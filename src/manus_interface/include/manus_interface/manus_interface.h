@@ -1,6 +1,7 @@
 #include <memory>
 
 #include "niryo_one_driver/niryo_one_communication.h"
+#include "niryo_one_driver/rpi_diagnostics.h"
 #include "ros_replacements/ros_time_repl.h"
 
 class NiryoOneManusInterface {
