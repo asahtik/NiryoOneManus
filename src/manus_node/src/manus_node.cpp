@@ -11,7 +11,7 @@ void NiryoOneManipulator::rwCtrlLoop(std::shared_ptr<NiryoOneManusInterface> i, 
 
 NiryoOneManipulator::NiryoOneManipulator() {
     loadDescription();
-    rwThread.reset(new std::thread(rwCtrlLoop, mi, std::ref(shuttingDown)));
+    rwThread.reset(new std::thread(&NiryoOneManipulator::rwCtrlLoop, mi, std::ref(shuttingDown)));
 }
 
 NiryoOneManipulator::~NiryoOneManipulator() {
@@ -137,7 +137,6 @@ int main(int argc, char** argv) {
             steady_clock::time_point start = steady_clock::now();
 
             manager.update();
-            if (!manipulator->process()) break;
 
             duration = duration_cast<milliseconds>(steady_clock::now() - start).count();
         }
