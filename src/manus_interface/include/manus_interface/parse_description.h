@@ -17,4 +17,4 @@ public:
     CJointDescription(JOINT_TYPE, double, double, double, double, double, double, double, double);
 };
 
-void parse_description(std::string, std::vector<CJointDescription>&);
+void parseDescription(const std::string, std::vector<CJointDescription>&);

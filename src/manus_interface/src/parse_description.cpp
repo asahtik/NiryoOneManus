@@ -18,7 +18,7 @@ JOINT_TYPE getJointType(std::string& type) {
     else return TOOL;
 }
 
-void parse_description(std::string& filename, std::vector<CJointDescription>& jointsOut) {
+void parseDescription(const std::string filename, std::vector<CJointDescription>& jointsOut) {
     YAML::Node file = YAML::LoadFile(filename);
 
     const YAML::Node& joints = file["joints"];

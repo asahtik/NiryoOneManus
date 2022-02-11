@@ -27,16 +27,18 @@ bool NiryoOneManipulator::move(int joint, float position, float speed) {
     return true;
 }
 
-// ManipulatorDescription NiryoOneManipulator::describe() {
-//     // TODO: Not yet implemented
-// }
+ManipulatorDescription NiryoOneManipulator::describe() {
+    // TODO: Not yet implemented
+    return ManipulatorDescription();
+}
 
-// ManipulatorState NiryoOneManipulator::state() {
-//     // TODO: Not yet implemented
-// }
+ManipulatorState NiryoOneManipulator::state() {
+    // TODO: Not yet implemented
+    return ManipulatorState();
+}
 
 void NiryoOneManipulator::loadDescription() {
-    parse_description("model.yaml", joints);
+    parseDescription("model.yaml", joints);
 }
 
 void NiryoOneManipulatorManager::step(bool force) {
@@ -122,7 +124,6 @@ int main(int argc, char** argv) {
     change_led(false, true, false);
 
     try {
-
         std::shared_ptr<NiryoOneManipulator> manipulator(new NiryoOneManipulator());
 
         SharedClient client = echolib::connect(string(), "manipulator");

@@ -39,8 +39,8 @@ public:
 	virtual int size();
 	virtual bool move(int joint, float position, float speed);
 
-	// virtual ManipulatorDescription describe();
-	// virtual ManipulatorState state();
+	virtual ManipulatorDescription describe();
+	virtual ManipulatorState state();
 private:
     std::unique_ptr<std::thread> rwThread;
 	std::vector<CJointDescription> joints;
