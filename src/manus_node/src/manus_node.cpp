@@ -11,7 +11,7 @@ void NiryoOneManipulator::rwCtrlLoop(std::shared_ptr<NiryoOneManusInterface> i, 
 
 NiryoOneManipulator::NiryoOneManipulator() {
     loadDescription();
-    rwThread.reset(new std::thread(&rwCtrlLoop, mi, std::ref(shuttingDown)));
+    rwThread.reset(new std::thread(rwCtrlLoop, mi, std::ref(shuttingDown)));
 }
 
 NiryoOneManipulator::~NiryoOneManipulator() {
@@ -24,6 +24,7 @@ int NiryoOneManipulator::size() {
 
 bool NiryoOneManipulator::move(int joint, float position, float speed) {
     if (!shuttingDown) mi->cmd[joint] = position;
+    return true;
 }
 
 // ManipulatorDescription NiryoOneManipulator::describe() {
@@ -45,7 +46,7 @@ void NiryoOneManipulatorManager::step(bool force) {
     bool goal = true;
 
     ManipulatorState state = manipulator->state();
-    for (size_t i = 0; i < manipulator->size(); i++) {
+    for (int i = 0; i < manipulator->size(); i++) {
         idle &= state.joints[i].type == JOINTSTATETYPE_IDLE;
         goal &= close_enough(state.joints[i].position, state.joints[i].goal);
     }
@@ -64,7 +65,7 @@ void NiryoOneManipulatorManager::step(bool force) {
         }
 
         mi->syncNextGoal(lastPlanSize == 0);
-        for (size_t i = 0; i < manipulator->size(); i++) {
+        for (int i = 0; i < manipulator->size(); i++) {
             manipulator->move(i, plan->segments[0].joints[i].goal, plan->segments[0].joints[i].speed);
         }
 
@@ -131,9 +132,15 @@ int main(int argc, char** argv) {
 
         bool ok = true;
         while (ok) {
-            if (!echolib::wait(20)) break;
-        }
+            if (!echolib::wait(std::max(1, 20 - duration))) break;
 
+            steady_clock::time_point start = steady_clock::now();
+
+            manager.update();
+            if (!manipulator->process()) break;
+
+            duration = duration_cast<milliseconds>(steady_clock::now() - start).count();
+        }
     } catch (ManipulatorException &e) {
         cout << "Exception: " << e.what() << endl;
         shutdown();
