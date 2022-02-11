@@ -37,42 +37,12 @@ ManipulatorState NiryoOneManipulator::state() {
     return ManipulatorState();
 }
 
-void NiryoOneManipulator::loadDescription() {
-    parseDescription("model.yaml", joints);
+void NiryoOneManipulator::prepareNewGoal(bool begin_trajectory = false) {
+    mi->syncNextGoal(begin_trajectory);
 }
 
-void NiryoOneManipulatorManager::step(bool force) {
-    if (!plan) return;
-
-    bool idle = true;
-    bool goal = true;
-
-    ManipulatorState state = manipulator->state();
-    for (int i = 0; i < manipulator->size(); i++) {
-        idle &= state.joints[i].type == JOINTSTATETYPE_IDLE;
-        goal &= close_enough(state.joints[i].position, state.joints[i].goal);
-    }
-
-    if (goal || force) {
-
-        if (plan->segments.size() == 0) {
-            PlanState state;
-            state.identifier = plan->identifier;
-            state.type = PLANSTATETYPE_COMPLETED;
-            planstate_publisher->send(state);
-            plan.reset();
-
-            lastPlanSize = 0;
-            return;
-        }
-
-        mi->syncNextGoal(lastPlanSize == 0);
-        for (int i = 0; i < manipulator->size(); i++) {
-            manipulator->move(i, plan->segments[0].joints[i].goal, plan->segments[0].joints[i].speed);
-        }
-
-        plan->segments.erase(plan->segments.begin());
-    }
+void NiryoOneManipulator::loadDescription() {
+    parseDescription("model.yaml", joints);
 }
 
 void shutdown() {

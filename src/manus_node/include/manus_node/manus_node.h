@@ -41,14 +41,11 @@ public:
 
 	virtual ManipulatorDescription describe();
 	virtual ManipulatorState state();
+
+	void prepareNewGoal(bool begin_trajectory = false);
 private:
     std::unique_ptr<std::thread> rwThread;
 	std::vector<CJointDescription> joints;
 
     void loadDescription();
-};
-
-class NiryoOneManipulatorManager : public ManipulatorManager {
-private:
-    void step(bool force = false);
 };
