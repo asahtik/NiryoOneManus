@@ -2,7 +2,7 @@
 
 void rwCtrlLoop(std::shared_ptr<NiryoOneManusInterface> i, const bool* notOk) {
     repl::Rate r(100);
-    while (!notOk) {
+    while (!*notOk) {
         i->read();
         i->write();
         r.sleep();
