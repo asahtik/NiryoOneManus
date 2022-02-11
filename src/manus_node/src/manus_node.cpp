@@ -1,6 +1,6 @@
 #include "manus_node/manus_node.h"
 
-void NiryoOneManipulator::rwCtrlLoop(std::shared_ptr<NiryoOneManusInterface> i, bool& notOk) {
+void rwCtrlLoop(std::shared_ptr<NiryoOneManusInterface> i, bool& notOk) {
     repl::Rate r(100);
     while (!notOk) {
         i->read();
@@ -11,7 +11,7 @@ void NiryoOneManipulator::rwCtrlLoop(std::shared_ptr<NiryoOneManusInterface> i, 
 
 NiryoOneManipulator::NiryoOneManipulator() {
     loadDescription();
-    rwThread.reset(new std::thread(&NiryoOneManipulator::rwCtrlLoop, mi, std::ref(shuttingDown)));
+    rwThread.reset(new std::thread(&rwCtrlLoop, mi, std::ref(shuttingDown)));
 }
 
 NiryoOneManipulator::~NiryoOneManipulator() {

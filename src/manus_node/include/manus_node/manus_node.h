@@ -24,6 +24,8 @@ void btnStateSwitchISR();
 volatile bool shuttingDown = false;
 void shutdown();
 
+void rwCtrlLoop(std::shared_ptr<NiryoOneManusInterface> i, bool& notOk);
+
 std::shared_ptr<NiryoOneManusInterface> mi;
 
 volatile int lastPlanSize = 0;
@@ -42,7 +44,6 @@ private:
     std::unique_ptr<std::thread> rwThread;
 	std::vector<CJointDescription> joints;
 
-    void rwCtrlLoop(std::shared_ptr<NiryoOneManusInterface> i, bool& notOk);
     void loadDescription();
 };
 
