@@ -8,9 +8,17 @@ set(SOURCES
     ${CMAKE_CURRENT_LIST_DIR}/src/change_led.cpp
 )
 
-find_library(WPI_LIB NAMES wiringPi REQUIRED)
-find_path(WPI_INCLUDE NAMES wiringPi.h REQUIRED)
-
 add_library(change_led ${SOURCES} ${HEADERS})
-target_link_libraries(change_led ${WPI_LIB})
-target_include_directories(change_led PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include ${WPI_INCLUDE})
+target_include_directories(change_led PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include)
+
+EXECUTE_PROCESS( COMMAND uname -m COMMAND tr -d '\n' OUTPUT_VARIABLE ARCHITECTURE )
+message( STATUS "Architecture: ${ARCHITECTURE}" )
+
+if (${ARCHITECTURE} MATCHES "arm")
+    message(STATUS "wiringPi library is required for utils (ARM processor)")
+    target_link_libraries(mcp_can_rpi
+        -lwiringPi
+    )
+else()
+    message(STATUS "wiringPi library not required")
+endif()

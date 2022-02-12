@@ -71,22 +71,36 @@ void btnStateSwitchISR() {
     }
 }
 
+void setupGpio() {
+    #ifdef __arm__
+    wiringPiSetupGpio();
+    #endif
+}
+
+void attachBtnInterrupt() {
+    #ifdef __arm__
+    pinMode(BTN_PIN, INPUT);
+    pullUpDnControl(BTN_PIN, PUD_UP);
+    wiringPiISR(BTN_PIN, INT_EDGE_FALLING, &btnStateSwitchISR);
+
+    OUTPUT_INFO("Waiting for start of calibration");
+    #else
+    calibrationRequested = true;
+    #endif
+}
+
 int main(int argc, char** argv) {
     OUTPUT_INFO("Starting up");
-    
+    setupGpio();
     last_pressed = repl::time_now();
-    wiringPiSetupGpio();
 
     change_led(false, false, true);
 
     mi.reset(new NiryoOneManusInterface());
     mi->init();
 
-    pinMode(BTN_PIN, INPUT);
-    pullUpDnControl(BTN_PIN, PUD_UP);
-    wiringPiISR(BTN_PIN, INT_EDGE_FALLING, &btnStateSwitchISR);
+    attachBtnInterrupt();
 
-    OUTPUT_INFO("Waiting for start of calibration");
     while (!calibrationRequested) repl::sleep(0.5);
 
     mi->calibrate();

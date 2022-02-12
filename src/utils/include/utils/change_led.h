@@ -1,4 +1,6 @@
+#ifdef __arm__
 #include <wiringPi.h>
+#endif
 
 #ifndef CHANGE_LED_H
 #define CHANGE_LED_H
