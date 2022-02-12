@@ -109,7 +109,7 @@ void attachBtnInterrupt() {
     #ifdef __arm__
     pinMode(BTN_PIN, INPUT);
     pullUpDnControl(BTN_PIN, PUD_UP);
-    wiringPiISR(BTN_PIN, INT_EDGE_FALLING, &btnStateSwitchISR);
+    wiringPiISR(BTN_PIN, INT_EDGE_BOTH, &btnStateSwitchISR);
 
     OUTPUT_INFO("Waiting for start of calibration");
     #else
