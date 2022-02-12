@@ -44,7 +44,6 @@ public:
 	void prepareNewGoal(bool begin_trajectory);
 private:
     std::unique_ptr<std::thread> rwThread;
-	std::vector<CJointDescription> joints;
 	ManipulatorDescription mDescription;
 	ManipulatorState mState;
 };
