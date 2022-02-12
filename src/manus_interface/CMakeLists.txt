@@ -6,11 +6,9 @@ find_package(yaml-cpp REQUIRED)
 set(DRIVER_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/niryo_one_driver)
 set(SOURCES 
     ${CMAKE_CURRENT_LIST_DIR}/src/manus_interface.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/src/parse_description.cpp
 )
 set(HEADERS
     ${CMAKE_CURRENT_LIST_DIR}/include/manus_interface/manus_interface.h
-    ${CMAKE_CURRENT_LIST_DIR}/include/manus_interface/parse_description.h
 )
 
 add_library(manus_interface
