@@ -10,7 +10,14 @@ void rwCtrlLoop(std::shared_ptr<NiryoOneManusInterface> i) {
 }
 
 void NiryoOneManipulator::loadDescription() {
-    parse_description(find_file("niryoonemanipulator.yaml"), mDescription);
+    try {
+        parse_description(find_file("niryoonemanipulator.yaml"), mDescription);
+    } catch() {
+        OUTPUT_ERROR("Error parsing description");
+        mi->shutdown();
+        exit(1);
+    }
+
     unsigned int noJoints = mDescription.joints.size();
     mState.joints.resize(noJoints);
     mState.state = MANIPULATORSTATETYPE_ACTIVE;
