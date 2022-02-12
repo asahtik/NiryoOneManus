@@ -38,6 +38,18 @@ void NiryoOneManusInterface::write() {
     comm->sendPositionToRobot(cmd);
 }
 
+void NiryoOneManusInterface::openGripper(double pos) {
+    // TODO: tool params
+    if (gripperOpen) {
+        comm->closeGripper(11, 230, 300, 128, 1023);
+        gripperOpen = false;
+    } else {
+        comm->openGripper(11, 600, 300, 128);
+        gripperOpen = true;
+    }
+        
+}
+
 void NiryoOneManusInterface::syncNextGoal(bool beginTrajectory) {
     comm->synchronizeMotors(beginTrajectory);
 }

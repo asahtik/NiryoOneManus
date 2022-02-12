@@ -10,11 +10,16 @@ public:
     void init();
     void read();
     void write();
+
+    void openGripper(double position);
+
     // Call before setting new goal
     void syncNextGoal(bool beginTrajectory);
     void calibrate();
 
     void shutdown();
+
+    bool gripperOpen = true;
 
     double pos[6] {0};
     double vel[6] {0};
