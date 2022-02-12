@@ -36,11 +36,12 @@ int NiryoOneManipulator::size() {
 double normalisePosition(JointDescription joint, float position) {
     if (position > joint.max) position = joint.max;
     else if (position < joint.min) position = joint.min;
+    return position;
 }
 
 bool NiryoOneManipulator::move(int joint, float position, float speed) {
     if (!shuttingDown) {
-        auto jointD = mDescription.joints.at(i);
+        auto jointD = mDescription.joints.at(joint);
         if (jointD.type != JOINTTYPE_GRIPPER)
             mi->cmd[joint] = normalisePosition(jointD, position);
         else {
