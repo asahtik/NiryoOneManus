@@ -10,7 +10,7 @@ void rwCtrlLoop(std::shared_ptr<NiryoOneManusInterface> i) {
 }
 
 void NiryoOneManipulator::loadDescription() {
-    parse_description("niryoonemanipulator.yaml", mDescription);
+    parse_description(find_file("niryoonemanipulator.yaml"), mDescription);
     unsigned int noJoints = mDescription.joints.size();
     mState.joints.resize(noJoints);
     mState.state = MANIPULATORSTATETYPE_ACTIVE;
