@@ -9,8 +9,19 @@ void rwCtrlLoop(std::shared_ptr<NiryoOneManusInterface> i) {
     }
 }
 
-NiryoOneManipulator::NiryoOneManipulator() {
+void NiryoOneManipulator::loadDescription() {
     parse_description("niryoonemanipulator.yaml", mDescription);
+    unsigned int noJoints = mDescription.joints.size();
+    mState.joints.resize(noJoints);
+    mState.state = MANIPULATORSTATETYPE_ACTIVE;
+
+    for (unsigned int i = 0; i < noJoints - 1; ++i) {
+        mState.joints.at(i).type = JOINTSTATETYPE_IDLE;
+    }
+}
+
+NiryoOneManipulator::NiryoOneManipulator() {
+    loadDescription();
     rwThread.reset(new std::thread(&rwCtrlLoop, mi));
 }
 
@@ -32,8 +43,14 @@ ManipulatorDescription NiryoOneManipulator::describe() {
 }
 
 ManipulatorState NiryoOneManipulator::state() {
-    // TODO: Not yet implemented
-    return ManipulatorState();
+    unsigned int noJoints = mDescription.joints.size();
+    for (unsigned int i = 0; i < noJoints - 1; ++i) {
+        mState.joints.at(i).position = mi->pos[i];
+        mState.joints.at(i).goal = mi->cmd[i];
+        mState.joints.at(i).speed = mi->vel[i];
+    }
+    mState.header.timestamp = system_clock::now();
+    return mState;
 }
 
 void NiryoOneManipulator::prepareNewGoal(bool begin_trajectory = false) {

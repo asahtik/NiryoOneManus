@@ -46,4 +46,6 @@ private:
     std::unique_ptr<std::thread> rwThread;
 	ManipulatorDescription mDescription;
 	ManipulatorState mState;
+
+	void loadDescription();
 };
