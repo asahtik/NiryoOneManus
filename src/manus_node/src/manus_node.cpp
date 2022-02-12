@@ -126,6 +126,7 @@ void attachBtnInterrupt() {
 }
 
 int main(int argc, char** argv) {
+    OUTPUT_INFO("Model path: %s", getenv("MODEL_DESCRIPTION"));
     OUTPUT_INFO("Starting up");
     setupGpio();
     last_pressed = repl::time_now();
