@@ -81,6 +81,7 @@ repl::Time last_pressed;
 void btnStateSwitchISR() {
     #ifdef __arm__
     bool btn = !(bool)digitalRead(BTN_PIN);
+    OUTPUT_INFO("Btn status %d", btn);
     auto now = repl::time_now();
     if (btn && noBtnPresses == 0) {
         last_pressed = now;
