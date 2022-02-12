@@ -54,6 +54,7 @@ void shutdown() {
 
 repl::Time last_pressed;
 void btnStateSwitchISR() {
+    #ifdef __arm__
     bool btn = !(bool)digitalRead(BTN_PIN);
     auto now = repl::time_now();
     if (btn && noBtnPresses == 0) {
@@ -69,6 +70,7 @@ void btnStateSwitchISR() {
         } else if (noBtnPresses == 0) calibrationRequested = true;
         ++noBtnPresses;
     }
+    #endif
 }
 
 void setupGpio() {
