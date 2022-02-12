@@ -19,7 +19,7 @@ NiryoOneManipulator::~NiryoOneManipulator() {
 }
 
 int NiryoOneManipulator::size() {
-    return return mDescription.joints.size();
+    return mDescription.joints.size();
 }
 
 bool NiryoOneManipulator::move(int joint, float position, float speed) {
