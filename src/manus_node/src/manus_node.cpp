@@ -15,6 +15,7 @@ void NiryoOneManipulator::loadDescription() {
     } catch(YAML::Exception& e) {
         OUTPUT_ERROR("Error parsing description");
         mi->shutdown();
+        change_led(true, false, true);
         exit(1);
     }
 
