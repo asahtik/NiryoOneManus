@@ -11,7 +11,7 @@ void rwCtrlLoop(std::shared_ptr<NiryoOneManusInterface> i) {
 
 void NiryoOneManipulator::loadDescription() {
     try {
-        parse_description(find_file("niryoonemanipulator.yaml"), mDescription);
+        parse_description(getenv("MODEL_DESCRIPTION"), mDescription);
     } catch(YAML::Exception& e) {
         OUTPUT_ERROR("Error parsing description");
         mi->shutdown();
