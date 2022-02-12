@@ -23,7 +23,7 @@ message( STATUS "Architecture: ${ARCHITECTURE}" )
 
 if (${ARCHITECTURE} MATCHES "arm")
     message(STATUS "wiringPi library is required for manus_node (ARM processor)")
-    target_link_libraries(mcp_can_rpi
+    target_link_libraries(manus_node
         -lwiringPi
     )
 else()
