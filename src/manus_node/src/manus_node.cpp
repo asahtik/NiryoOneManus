@@ -10,7 +10,7 @@ void rwCtrlLoop(std::shared_ptr<NiryoOneManusInterface> i) {
 }
 
 NiryoOneManipulator::NiryoOneManipulator() {
-    loadDescription();
+    parse_description("niryoonemanipulator.yaml", mDescription);
     rwThread.reset(new std::thread(&rwCtrlLoop, mi));
 }
 
@@ -28,8 +28,7 @@ bool NiryoOneManipulator::move(int joint, float position, float speed) {
 }
 
 ManipulatorDescription NiryoOneManipulator::describe() {
-    // TODO: Not yet implemented
-    return ManipulatorDescription();
+    return mDescription;
 }
 
 ManipulatorState NiryoOneManipulator::state() {
@@ -39,10 +38,6 @@ ManipulatorState NiryoOneManipulator::state() {
 
 void NiryoOneManipulator::prepareNewGoal(bool begin_trajectory = false) {
     mi->syncNextGoal(begin_trajectory);
-}
-
-void NiryoOneManipulator::loadDescription() {
-    parseDescription("model.yaml", joints);
 }
 
 void shutdown() {

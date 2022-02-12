@@ -11,7 +11,6 @@
 #include "yaml-cpp/yaml.h"
 
 #include "manus_interface/manus_interface.h"
-#include "manus_interface/parse_description.h"
 #include "utils/change_led.h"
 #include "ros_replacements/ros_time_repl.h"
 #include "ros_replacements/status_output.h"
@@ -46,6 +45,6 @@ public:
 private:
     std::unique_ptr<std::thread> rwThread;
 	std::vector<CJointDescription> joints;
-
-    void loadDescription();
+	ManipulatorDescription mDescription;
+	ManipulatorState mState;
 };
