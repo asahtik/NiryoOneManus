@@ -6,7 +6,7 @@ joints:
     transform: 
       tx: 0
       ty: 0
-      tz: 0.103
+      tz: 103
       rr: 0
       rp: 0
       ry: 0
@@ -18,7 +18,7 @@ joints:
     transform: 
       tx: 0
       ty: 0
-      tz: 0.080
+      tz: 80
       rr: 90
       rp: -90
       ry: 0
@@ -28,7 +28,7 @@ joints:
   - type: "rotation" # joint 3
     axis: "z"
     transform: 
-      tx: 0.210
+      tx: 210
       ty: 0
       tz: 0
       rr: 0
@@ -40,8 +40,8 @@ joints:
   - type: "rotation" # joint 4
     axis: "z"
     transform: 
-      tx: 0.0415
-      ty: 0.030
+      tx: 41.5
+      ty: 30
       tz: 0
       rr: 0
       rp: 90
@@ -54,7 +54,7 @@ joints:
     transform: 
       tx: 0
       ty: 0
-      tz: 0.180
+      tz: 180
       rr: 0
       rp: -90
       ry: 0
@@ -64,8 +64,8 @@ joints:
   - type: "rotation" # joint 6
     axis: "z"
     transform: 
-      tx: 0.0164
-      ty: -0.0055
+      tx: 16.4
+      ty: -5.5
       tz: 0
       rr: 0
       rp: 90
@@ -78,7 +78,7 @@ joints:
     transform:
       tx: 0
       ty: 0
-      tz: 0.0073
+      tz: 7.3
       rr: -90
       rp: -90
       ry: 0
