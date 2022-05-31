@@ -40,7 +40,7 @@ void NiryoOneManusInterface::write() {
 
 void NiryoOneManusInterface::openGripper(double pos) {
     // TODO: tool params
-    if (gripperOpen) {
+    if (pos < 0.5) {
         comm->closeGripper(11, 230, 300, 128, 1023);
         gripperOpen = false;
     } else {

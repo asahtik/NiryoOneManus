@@ -73,7 +73,7 @@ joints:
     min: -147
     max: 147.49
     safe: 0
-  - type: "gripper"
+  - type: "fixed"
     axis: "none"
     transform:
       tx: 0
@@ -82,6 +82,7 @@ joints:
       rr: -90
       rp: -90
       ry: 0
-    min: 230
-    max: 600
-    safe: 0
+  - type: "gripper"
+    axis: "none"
+    min: 0
+    max: 1
