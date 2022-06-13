@@ -46,7 +46,6 @@ class StepperMotorState {
             time_last_read = *new repl::Time();
 
             firmware_version = "0.0.0";
-            conveyor_state = 0; 
             resetState();
             resetCommand();
         }
