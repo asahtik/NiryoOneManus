@@ -132,7 +132,7 @@ int main(int argc, char** argv) {
         MODEL_PATH = argv[1];
     else
         MODEL_PATH =  getenv("MODEL_DESCRIPTION");
-    OUTPUT_INFO("Model path: %s", MODEL_PATH);
+    OUTPUT_INFO("Model path: %s", MODEL_PATH.c_str());
     OUTPUT_INFO("Starting up");
     setupGpio();
     last_pressed = repl::time_now();
