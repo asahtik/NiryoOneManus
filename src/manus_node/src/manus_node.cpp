@@ -1,5 +1,7 @@
 #include "manus_node/manus_node.h"
 
+std::string MODEL_PATH;
+
 void rwCtrlLoop(std::shared_ptr<NiryoOneManusInterface> i) {
     repl::Rate r(100);
     while (!shuttingDown) {
@@ -11,7 +13,7 @@ void rwCtrlLoop(std::shared_ptr<NiryoOneManusInterface> i) {
 
 void NiryoOneManipulator::loadDescription() {
     try {
-        parse_description(getenv("MODEL_DESCRIPTION"), mDescription);
+        parse_description(MODEL_PATH, mDescription);
     } catch(...) {
         OUTPUT_ERROR("Error parsing description");
         mi->shutdown();
@@ -126,7 +128,11 @@ void attachBtnInterrupt() {
 }
 
 int main(int argc, char** argv) {
-    OUTPUT_INFO("Model path: %s", getenv("MODEL_DESCRIPTION"));
+    if (argc > 1)
+        MODEL_PATH = argv[1];
+    else
+        MODEL_PATH =  getenv("MODEL_DESCRIPTION");
+    OUTPUT_INFO("Model path: %s", MODEL_PATH);
     OUTPUT_INFO("Starting up");
     setupGpio();
     last_pressed = repl::time_now();
