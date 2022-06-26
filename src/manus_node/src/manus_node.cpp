@@ -72,6 +72,7 @@ ManipulatorState NiryoOneManipulator::state() {
         mState.joints.at(i).goal = mi->cmd[i];
         mState.joints.at(i).speed = mi->vel[i];
     }
+    mState.joints.at(noJoints - 1).position = !mi->gripperOpen;
     mState.header.timestamp = system_clock::now();
     return mState;
 }
@@ -165,7 +166,7 @@ int main(int argc, char** argv) {
             steady_clock::time_point start = steady_clock::now();
 
             manager.update();
-
+            
             duration = duration_cast<milliseconds>(steady_clock::now() - start).count();
         }
     } catch (ManipulatorException &e) {

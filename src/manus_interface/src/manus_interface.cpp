@@ -12,6 +12,7 @@ NiryoOneManusInterface::NiryoOneManusInterface() {
 }
 
 void NiryoOneManusInterface::init() {
+    comm->pingAndSetDxlTool(11, "Gripper 1");
     comm->scanAndCheckMotors();
     repl::sleep(0.1);
     comm->manageHardwareConnection();
