@@ -50,7 +50,7 @@ int DxlCommunication::init()
     // TODO: get params
     // // get params from rosparams
     // ros::param::get("~dxl_uart_device_name", device_name);
-    device_name = "/dev/ttyS0";
+    device_name = "/dev/ttyAMA0";
     // ros::param::get("~dxl_baudrate", uart_baudrate);
     uart_baudrate = 1000000;
 

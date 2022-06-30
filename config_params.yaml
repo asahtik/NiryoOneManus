@@ -10,7 +10,7 @@ version: 1.0
 
 # Dynamixel bus
 dxl_baudrate:         1000000
-dxl_uart_device_name: "/dev/ttyS0"
+dxl_uart_device_name: "/dev/ttyAMA0"
 
 # CAN bus
 spi_channel:        0
