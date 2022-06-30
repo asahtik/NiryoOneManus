@@ -149,6 +149,8 @@ int main(int argc, char** argv) {
 
     mi->calibrate();
 
+    mi->openGripper(1.0);
+
     change_led(false, true, false);
 
     try {
