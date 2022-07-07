@@ -130,17 +130,17 @@ void attachBtnInterrupt() {
     #endif
 }
 
+void sigintSR(int s) {
+    OUTPUT_WARNING("Shutting down program");
+    shutdown(false);
+}
+
 void setupSigint() {
     struct sigaction sigIntHandler;
-    sigIntHandler.sa_handler = my_handler;
+    sigIntHandler.sa_handler = &sigintSR;
     sigemptyset(&sigIntHandler.sa_mask);
     sigIntHandler.sa_flags = 0;
     sigaction(SIGINT, &sigIntHandler, NULL);
-}
-
-void sigintHandler(int s) {
-    OUTPUT_WARNING("Shutting down program");
-    shutdown(false);
 }
 
 int main(int argc, char** argv) {
