@@ -43,12 +43,11 @@ void NiryoOneManusInterface::openGripper(double pos) {
     // TODO: tool params
     if (pos < 0.5) {
         comm->closeGripper(11, 230, 300, 128, 1023);
-        gripperOpen = false;
     } else {
         comm->openGripper(11, 600, 300, 128);
-        gripperOpen = true;
     }
-        
+    gripperCmd = pos;
+    gripperPos = pos;
 }
 
 void NiryoOneManusInterface::syncNextGoal(bool beginTrajectory) {

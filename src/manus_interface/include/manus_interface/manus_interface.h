@@ -19,10 +19,13 @@ public:
 
     void shutdown();
 
-    bool gripperOpen = true;
+    double gripperPos = 1.0;
+    double gripperVel = 1.0;
+    double gripperEff = 0;
+    double gripperCmd = 1.0;
 
     double pos[6] {0};
-    double vel[6] {0};
+    double vel[6] {1.0};
     double cmd[6] {0};
     double eff[6] {0};
 
