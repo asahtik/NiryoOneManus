@@ -1,3 +1,4 @@
+#include <signal.h>
 #include "manus_node/manus_node.h"
 
 std::string MODEL_PATH;
@@ -81,11 +82,12 @@ void NiryoOneManipulator::prepareNewGoal(bool begin_trajectory = false) {
     mi->syncNextGoal(begin_trajectory);
 }
 
-void shutdown() {
+void shutdown(bool shutdownSystem = false) {
     shuttingDown = true;
     change_led(true, false, true);
     mi->shutdown();
-    system("shutdown 0");
+    if (shutdownSystem)
+        system("shutdown 0");
 }
 
 repl::Time last_pressed;
@@ -103,7 +105,7 @@ void btnStateSwitchISR() {
     } else if (!btn && (now - last_pressed) > repl::Millis(100)) {
         btnPressed = false;
         if ((now - last_pressed) > repl::Millis(5000)) {
-            shutdown();
+            shutdown(true);
         } else if (noBtnPresses == 0) calibrationRequested = true;
         ++noBtnPresses;
     }
@@ -128,6 +130,19 @@ void attachBtnInterrupt() {
     #endif
 }
 
+void setupSigint() {
+    struct sigaction sigIntHandler;
+    sigIntHandler.sa_handler = my_handler;
+    sigemptyset(&sigIntHandler.sa_mask);
+    sigIntHandler.sa_flags = 0;
+    sigaction(SIGINT, &sigIntHandler, NULL);
+}
+
+void sigintHandler(int s) {
+    OUTPUT_WARNING("Shutting down program");
+    shutdown(false);
+}
+
 int main(int argc, char** argv) {
     if (argc > 1)
         MODEL_PATH = argv[1];
@@ -144,6 +159,7 @@ int main(int argc, char** argv) {
     mi->init();
 
     attachBtnInterrupt();
+    setupSigint();
 
     while (!calibrationRequested) repl::sleep(0.5);
 

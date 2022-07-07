@@ -79,10 +79,10 @@ void NiryoOneManusInterface::calibrate() {
 };
 
 void NiryoOneManusInterface::shutdown() {
-    repl::sleep(2);
+    repl::sleep(1);
     cmd[0] = 0; cmd[1] = 0; cmd[2] = 0; cmd[3] = 0; cmd[4] = 0; cmd[5] = 0; cmd[6] = 0;
     write();
-    repl::sleep(10);
+    repl::sleep(5);
     comm->activateLearningMode(true);
     repl::sleep(10);
 }
