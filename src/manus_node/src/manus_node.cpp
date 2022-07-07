@@ -82,7 +82,7 @@ void NiryoOneManipulator::prepareNewGoal(bool begin_trajectory = false) {
     mi->syncNextGoal(begin_trajectory);
 }
 
-void shutdown(bool shutdownSystem = false) {
+void shutdown(bool shutdownSystem) {
     shuttingDown = true;
     change_led(true, false, true);
     mi->shutdown();

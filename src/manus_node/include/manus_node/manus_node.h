@@ -22,7 +22,7 @@ volatile bool btnPressed = false;
 void btnStateSwitchISR();
 
 volatile bool shuttingDown = false;
-void shutdown();
+void shutdown(bool shutdownSystem = false);
 
 void rwCtrlLoop(std::shared_ptr<NiryoOneManusInterface> i);
 
