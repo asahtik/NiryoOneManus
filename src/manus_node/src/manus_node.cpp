@@ -137,10 +137,12 @@ void sigintSR(int s) {
 
 void setupSigint() {
     struct sigaction sigIntHandler;
-    sigIntHandler.sa_handler = &sigintSR;
+    sigIntHandler.sa_handler = sigintSR;
     sigemptyset(&sigIntHandler.sa_mask);
     sigIntHandler.sa_flags = 0;
     sigaction(SIGINT, &sigIntHandler, NULL);
+    sigaction(SIGSTOP, &sigIntHandler, NULL);
+    sigaction(SIGABRT, &sigIntHandler, NULL);
 }
 
 int main(int argc, char** argv) {
