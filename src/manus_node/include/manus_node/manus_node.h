@@ -41,7 +41,7 @@ public:
 	virtual ManipulatorDescription describe();
 	virtual ManipulatorState state();
 
-	void prepareNewGoal(bool begin_trajectory);
+	virtual void prepareNewGoal(bool begin_trajectory);
 private:
     std::unique_ptr<std::thread> rwThread;
 	ManipulatorDescription mDescription;

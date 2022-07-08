@@ -48,7 +48,6 @@ INT8U NiryoCanDriver::init()
     // messages with ids != motor_id will be sent to another ROS interface
     // so we can use many CAN devices with this only driver
     int result = mcp_can->begin(MCP_ANY, CAN_1000KBPS, MCP_16MHZ);
-    OUTPUT_INFO("Result begin can : %d", result);
     
     if (result != CAN_OK) {
         OUTPUT_ERROR("Failed to init MCP2515 (CAN bus)");
