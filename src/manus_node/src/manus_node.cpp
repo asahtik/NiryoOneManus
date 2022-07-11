@@ -157,7 +157,7 @@ void sigusr1SR(int s) {
 
 void setupSigusr() {
     struct sigaction sigUsrHandler;
-    sigUsrHandler.sa_handler = sigintSR;
+    sigUsrHandler.sa_handler = sigusr1SR;
     sigemptyset(&sigUsrHandler.sa_mask);
     sigUsrHandler.sa_flags = 0;
     sigaction(SIGUSR1, &sigUsrHandler, NULL);
