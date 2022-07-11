@@ -85,3 +85,7 @@ void NiryoOneManusInterface::shutdown() {
     comm->activateLearningMode(true);
     repl::sleep(10);
 }
+
+void NiryoOneManusInterface::activateTorque(bool on) {
+    comm->activateLearningMode(on);
+}

@@ -148,6 +148,21 @@ void setupSigint() {
     sigaction(SIGABRT, &sigIntHandler, NULL);
 }
 
+bool torqueOn = true;
+void sigusr1SR(int s) {
+    OUTPUT_WARNING("Starting learning mode %d", torqueOn);
+    torqueOn = !torqueOn;
+    mi->activateTorque(torqueOn);
+}
+
+void setupSigusr() {
+    struct sigaction sigUsrHandler;
+    sigUsrHandler.sa_handler = sigintSR;
+    sigemptyset(&sigUsrHandler.sa_mask);
+    sigUsrHandler.sa_flags = 0;
+    sigaction(SIGUSR1, &sigUsrHandler, NULL);
+}
+
 int main(int argc, char** argv) {
     if (argc > 1)
         MODEL_PATH = argv[1];

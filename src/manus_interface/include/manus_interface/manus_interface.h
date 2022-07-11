@@ -19,6 +19,8 @@ public:
 
     void shutdown();
 
+    void activateTorque(bool on);
+
     double gripperPos = 1.0;
     double gripperVel = 1.0;
     double gripperEff = 0;
