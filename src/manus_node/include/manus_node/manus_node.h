@@ -17,7 +17,6 @@
 
 const int BTN_PIN = 4;
 volatile long noBtnPresses = 0;
-volatile bool calibrationRequested = false;
 volatile bool btnPressed = false;
 void btnStateSwitchISR();
 

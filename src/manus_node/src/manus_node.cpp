@@ -3,11 +3,22 @@
 
 std::string MODEL_PATH;
 
+volatile bool calibrationRequested = false;
+volatile bool calibrated = false;
+
 void rwCtrlLoop(std::shared_ptr<NiryoOneManusInterface> i) {
     repl::Rate r(100);
     while (!shuttingDown) {
         i->read();
-        i->write();
+        if (calibrated) {   
+            i->write();
+        } else if (calibrationRequested) {
+            mi->calibrate();
+            mi->openGripper(1.0);
+            repl::sleep(2);
+            calibrated = true;
+            change_led(false, true, false);
+        }
         r.sleep();
     }
 }
@@ -180,14 +191,6 @@ int main(int argc, char** argv) {
 
     attachBtnInterrupt();
     setupSigint();
-
-    while (!calibrationRequested) repl::sleep(0.5);
-
-    mi->calibrate();
-
-    mi->openGripper(1.0);
-
-    change_led(false, true, false);
 
     try {
         std::shared_ptr<NiryoOneManipulator> manipulator(new NiryoOneManipulator());
