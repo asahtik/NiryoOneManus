@@ -1,0 +1,87 @@
+name: "Niryo One Manus"
+version: 1.0
+joints:
+  - type: "fixed"
+    transform:
+      tx: 0
+      ty: 0
+      tz: 103
+      rr: 0
+      rp: 0
+      ry: 0
+  - type: "rotation" # joint 1
+    axis: "z"
+    min: -175
+    max: 175
+    safe: 0
+    transform:
+      tx: 0
+      ty: 0
+      tz: 80
+      rr: 90
+      rp: -90
+      ry: 0
+  - type: "rotation" # joint 2
+    axis: "z"
+    min: -90
+    max: 36.68
+    safe: 0
+    transform:
+      tx: 210
+      ty: 0
+      tz: 0
+      rr: 0
+      rp: 0
+      ry: -90
+  - type: "rotation" # joint 3
+    axis: "z"
+    min: -80
+    max: 90
+    safe: 0
+    transform:
+      tx: 41.5
+      ty: 30
+      tz: 0
+      rr: 0
+      rp: 90
+      ry: 0
+  - type: "rotation" # joint 4
+    axis: "z"
+    min: -175
+    max: 175
+    safe: 0
+    transform:
+      tx: 0
+      ty: 0
+      tz: 180
+      rr: 0
+      rp: -90
+      ry: 0
+  - type: "rotation" # joint 5
+    axis: "z"
+    min: -100
+    max: 109.99
+    safe: 0
+    transform: 
+      tx: 16.4
+      ty: -5.5
+      tz: 0
+      rr: 0
+      rp: 90
+      ry: 0
+  - type: "rotation" # joint 6
+    axis: "z"
+    min: -147
+    max: 147.49
+    safe: 0
+    transform:
+      tx: 0
+      ty: 0
+      tz: 7.3
+      rr: -90
+      rp: -90
+      ry: 0
+  - type: "gripper"
+    axis: "none"
+    min: 0
+    max: 1
