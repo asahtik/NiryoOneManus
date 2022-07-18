@@ -61,12 +61,21 @@ double normalisePosition(JointDescription joint, float position) {
     return position;
 }
 
+int jointToCmd(int joint, ManipulatorDescription& desc) {
+    int cmd = joint;
+    for (int i = joint; i >= 0; --i) {
+        if (desc.joints.at(i).type == JOINTTYPE_FIXED) --cmd;
+    }
+    return cmd;
+}
+
 bool NiryoOneManipulator::move(int joint, float position, float speed) {
     if (!shuttingDown) {
+        OUTPUT_INFO("Joint: %d - Position: %f", joint, position);
         auto jointD = mDescription.joints.at(joint);
-        if (jointD.type != JOINTTYPE_GRIPPER)
-            mi->cmd[joint] = normalisePosition(jointD, position);
-        else {
+        if (jointD.type != JOINTTYPE_GRIPPER && jointD.type != JOINTTYPE_FIXED)
+            mi->cmd[jointToCmd(joint)] = normalisePosition(jointD, position);
+        else if (jointD.type != JOINTTYPE_GRIPPER) {
             mi->openGripper(normalisePosition(jointD, position));
         }
     }
@@ -79,10 +88,18 @@ ManipulatorDescription NiryoOneManipulator::describe() {
 
 ManipulatorState NiryoOneManipulator::state() {
     unsigned int noJoints = mDescription.joints.size();
+    int cmd = 0;
     for (unsigned int i = 0; i < noJoints - 1; ++i) {
-        mState.joints.at(i).position = mi->pos[i];
-        mState.joints.at(i).goal = mi->cmd[i];
-        mState.joints.at(i).speed = mi->vel[i];
+        if (mDescription.joints.at(i).type != JOINTTYPE_FIXED) {
+            mState.joints.at(i).position = mi->pos[cmd];
+            mState.joints.at(i).goal = mi->cmd[cmd];
+            mState.joints.at(i).speed = mi->vel[cmd];
+            ++cmd;
+        } else {
+            mState.joints.at(i).position = 0;
+            mState.joints.at(i).goal = 0;
+            mState.joints.at(i).speed = 0;
+        }
     }
     mState.joints.at(noJoints - 1).position = !mi->gripperPos;
     mState.joints.at(noJoints - 1).goal = mi->gripperCmd;
