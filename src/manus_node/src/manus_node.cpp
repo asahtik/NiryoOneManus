@@ -101,7 +101,7 @@ ManipulatorState NiryoOneManipulator::state() {
             mState.joints.at(i).speed = 0;
         }
     }
-    mState.joints.at(noJoints - 1).position = !mi->gripperPos;
+    mState.joints.at(noJoints - 1).position = mi->gripperPos;
     mState.joints.at(noJoints - 1).goal = mi->gripperCmd;
     mState.joints.at(noJoints - 1).speed = mi->gripperVel;
     mState.header.timestamp = system_clock::now();
