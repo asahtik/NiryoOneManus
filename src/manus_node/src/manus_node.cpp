@@ -74,7 +74,7 @@ bool NiryoOneManipulator::move(int joint, float position, float speed) {
         OUTPUT_INFO("Joint: %d - Position: %f", joint, position);
         auto jointD = mDescription.joints.at(joint);
         if (jointD.type != JOINTTYPE_GRIPPER && jointD.type != JOINTTYPE_FIXED)
-            mi->cmd[jointToCmd(joint)] = normalisePosition(jointD, position);
+            mi->cmd[jointToCmd(joint, mDescription)] = normalisePosition(jointD, position);
         else if (jointD.type != JOINTTYPE_GRIPPER) {
             mi->openGripper(normalisePosition(jointD, position));
         }
