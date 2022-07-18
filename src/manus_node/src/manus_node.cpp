@@ -95,10 +95,6 @@ ManipulatorState NiryoOneManipulator::state() {
             mState.joints.at(i).goal = mi->cmd[cmd];
             mState.joints.at(i).speed = mi->vel[cmd];
             ++cmd;
-        } else {
-            mState.joints.at(i).position = 0;
-            mState.joints.at(i).goal = 0;
-            mState.joints.at(i).speed = 0;
         }
     }
     mState.joints.at(noJoints - 1).position = mi->gripperPos;
