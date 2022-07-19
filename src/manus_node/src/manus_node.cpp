@@ -71,13 +71,11 @@ int jointToCmd(int joint, ManipulatorDescription& desc) {
 
 bool NiryoOneManipulator::move(int joint, float position, float speed) {
     if (!shuttingDown) {
-        OUTPUT_INFO("Joint: %d, Cmd: %d - Position: %f - Normalised: %f", joint + 1, jointToCmd(joint, mDescription), position, normalisePosition(mDescription.joints.at(joint), position));
         auto jointD = mDescription.joints.at(joint);
         if (jointD.type != JOINTTYPE_GRIPPER && jointD.type != JOINTTYPE_FIXED)
             mi->cmd[jointToCmd(joint, mDescription)] = normalisePosition(jointD, position);
-        else if (jointD.type != JOINTTYPE_GRIPPER) {
+        else if (jointD.type == JOINTTYPE_GRIPPER) {
             mi->openGripper(normalisePosition(jointD, position));
-            OUTPUT_INFO("Opening gripper %f", position);
         }
     }
     return true;
@@ -105,7 +103,6 @@ ManipulatorState NiryoOneManipulator::state() {
     mState.joints.at(noJoints - 1).position = mi->gripperPos;
     mState.joints.at(noJoints - 1).goal = mi->gripperCmd;
     mState.joints.at(noJoints - 1).speed = mi->gripperVel;
-    OUTPUT_INFO("Gripper state: pos: %f, goal: %f", mState.joints.at(noJoints - 1).position, mState.joints.at(noJoints - 1).goal);
     mState.header.timestamp = system_clock::now();
     return mState;
 }
