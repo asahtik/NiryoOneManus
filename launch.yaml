@@ -70,3 +70,7 @@ programs:
             plan: manipulator0.plan
             planstate: manipulator0.planstate
             trajectory: manipulator0.trajectory
+    applications:
+        command: "python3 -u -m manus_apps"
+        restart: true
+        depends: [echo]
