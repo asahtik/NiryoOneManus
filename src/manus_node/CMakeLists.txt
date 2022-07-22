@@ -15,7 +15,7 @@ set(SOURCES
 
 add_executable(manus_node ${SOURCES} ${HEADERS})
 target_link_libraries(manus_node manus_interface change_led ros_replacements ${manus_LIBRARIES} ${echolib_LIBRARIES} ${OpenServo_LIBRARIES} ${YAML_CPP_LIBRARIES} Threads::Threads)
-target_include_directories(manus_node PRIVATE ${CMAKE_CURRENT_LIST_DIR}/include manus_interface change_led ros_replacements ${manus_INCLUDE_DIRS} ${echolib_INCLUDE_DIRS} ${OpenServo_INCLUDE_DIRS} ${YAML_CPP_INCLUDE_DIRS})
+target_include_directories(manus_node PRIVATE ${CMAKE_CURRENT_LIST_DIR}/include manus_interface change_led ros_replacements ${manus_INCLUDE_DIRS} ${echolib_INCLUDE_DIRS} ${YAML_CPP_INCLUDE_DIRS})
 add_dependencies(manus_node manus_interface change_led)
 
 EXECUTE_PROCESS( COMMAND uname -m COMMAND tr -d '\n' OUTPUT_VARIABLE ARCHITECTURE )
