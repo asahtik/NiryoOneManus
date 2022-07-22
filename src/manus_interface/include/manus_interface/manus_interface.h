@@ -4,7 +4,7 @@
 #include "niryo_one_driver/rpi_diagnostics.h"
 #include "ros_replacements/ros_time_repl.h"
 
-enum class JointState {IDLE, MOVING, ERROR};
+enum class JointMotorState {IDLE, MOVING, ERROR};
 class NiryoOneManusInterface {
 public:
     NiryoOneManusInterface();
@@ -31,7 +31,7 @@ public:
     double vel[6] {1.0};
     double cmd[6] {0};
     double eff[6] {0};
-    JointState state[6] {JointState::IDLE};
+    JointMotorState state[6] {JointMotorState::IDLE};
 
     std::shared_ptr<NiryoOneCommunication> comm;
     std::unique_ptr<RpiDiagnostics> rpiDiagnostics;

@@ -23,16 +23,16 @@ void rwCtrlLoop(std::shared_ptr<NiryoOneManusInterface> i) {
         auto now = repl::time_now();
         for (int j = 0; j < 6; j++) {
             if (std::abs(i->cmd[j] - i->pos[j]) <= MAX_GOAL_DISTANCE) {
-                i->state[j] = JointState::IDLE;
+                i->state[j] = JointMotorState::IDLE;
                 erridle_times[j] = now;
             } else if (std::abs(last_pos[j] - i->pos[j]) <= EQ_POSITION_THRESHOLD) {
                 if (now - erridle_times[j] > repl::Millis(IDLE_ERROR_WAIT_MILLIS)) {
-                    i->state[j] = JointState::ERROR;
+                    i->state[j] = JointMotorState::ERROR;
                 } else {
-                    i->state[j] = JointState::MOVING;
+                    i->state[j] = JointMotorState::MOVING;
                 }
             } else {
-                i->state[j] = JointState::MOVING;
+                i->state[j] = JointMotorState::MOVING;
                 erridle_times[j] = now;
             }
             last_pos[j] = i->pos[j];
@@ -115,11 +115,11 @@ ManipulatorDescription NiryoOneManipulator::describe() {
     return mDescription;
 }
 
-inline JointStateType toManusStateType(const JointState& state) {
+inline JointStateType toManusStateType(const JointMotorState& state) {
     switch (state) {
-        case JointState::IDLE: return JOINTSTATETYPE_IDLE;
-        case JointState::MOVING: return JOINTSTATETYPE_MOVING;
-        case JointState::ERROR: return JOINTSTATETYPE_ERROR;
+        case JointMotorState::IDLE: return JOINTSTATETYPE_IDLE;
+        case JointMotorState::MOVING: return JOINTSTATETYPE_MOVING;
+        case JointMotorState::ERROR: return JOINTSTATETYPE_ERROR;
         default: return JOINTSTATETYPE_ERROR;
     }
 }
