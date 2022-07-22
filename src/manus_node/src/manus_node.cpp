@@ -1,5 +1,12 @@
 #include <signal.h>
+#include <algorithm>
+#include <iterator>
 #include "manus_node/manus_node.h"
+
+#define GRIP_WAIT_MILLIS 4000
+#define MAX_GOAL_DISTANCE 0.02
+#define EQ_POSITION_THRESHOLD 0.001
+#define IDLE_ERROR_WAIT_MILLIS 500
 
 std::string MODEL_PATH;
 
@@ -8,13 +15,34 @@ volatile bool calibrated = false;
 
 void rwCtrlLoop(std::shared_ptr<NiryoOneManusInterface> i) {
     repl::Rate r(100);
+    double last_pos[6];
+    repl::Time erridle_times[6] {repl::time_now()};
+    bool erridle_set = false;
     while (!shuttingDown) {
         i->read();
+        auto now = repl::time_now();
+        for (int j = 0; j < 6; j++) {
+            if (std::abs(i->cmd[j] - i->pos[j]) <= MAX_GOAL_DISTANCE) {
+                i->state[j] = JointState::IDLE;
+                erridle_times[j] = now;
+            } else if (std::abs(last_pos[j] - i->pos[j]) <= EQ_POSITION_THRESHOLD) {
+                if (now - erridle_times[j] > repl::Millis(IDLE_ERROR_WAIT_MILLIS)) {
+                    i->state[j] = JointState::ERROR;
+                } else {
+                    i->state[j] = JointState::MOVING;
+                }
+            } else {
+                i->state[j] = JointState::MOVING;
+                erridle_times[j] = now;
+            }
+            last_pos[j] = i->pos[j];
+        }
+
         if (calibrated) {   
             i->write();
         } else if (calibrationRequested) {
-            mi->calibrate();
-            mi->openGripper(1.0);
+            i->calibrate();
+            i->openGripper(1.0);
             repl::sleep(2);
             calibrated = true;
             change_led(false, true, false);
@@ -69,12 +97,14 @@ int jointToCmd(int joint, ManipulatorDescription& desc) {
     return cmd;
 }
 
+auto grip_time = repl::time_now();
 bool NiryoOneManipulator::move(int joint, float position, float speed) {
     if (!shuttingDown) {
         auto jointD = mDescription.joints.at(joint);
         if (jointD.type != JOINTTYPE_GRIPPER && jointD.type != JOINTTYPE_FIXED)
             mi->cmd[jointToCmd(joint, mDescription)] = normalisePosition(jointD, position);
         else if (jointD.type == JOINTTYPE_GRIPPER) {
+            grip_time = repl::time_now();
             mi->openGripper(normalisePosition(jointD, position));
         }
     }
@@ -85,11 +115,21 @@ ManipulatorDescription NiryoOneManipulator::describe() {
     return mDescription;
 }
 
+inline JointStateType toManusStateType(const JointState& state) {
+    switch (state) {
+        case JointState::IDLE: return JOINTSTATETYPE_IDLE;
+        case JointState::MOVING: return JOINTSTATETYPE_MOVING;
+        case JointState::ERROR: return JOINTSTATETYPE_ERROR;
+        default: return JOINTSTATETYPE_ERROR;
+    }
+}
+
 ManipulatorState NiryoOneManipulator::state() {
     unsigned int noJoints = mDescription.joints.size();
     int cmd = 0;
     for (unsigned int i = 0; i < noJoints - 1; ++i) {
         if (mDescription.joints.at(i).type != JOINTTYPE_FIXED) {
+            mState.joints.at(i).type = toManusStateType(mi->state[cmd]);
             mState.joints.at(i).position = mi->pos[cmd];
             mState.joints.at(i).goal = mi->cmd[cmd];
             mState.joints.at(i).speed = mi->vel[cmd];
@@ -103,6 +143,11 @@ ManipulatorState NiryoOneManipulator::state() {
     mState.joints.at(noJoints - 1).position = mi->gripperPos;
     mState.joints.at(noJoints - 1).goal = mi->gripperCmd;
     mState.joints.at(noJoints - 1).speed = mi->gripperVel;
+    if (repl::time_now() - grip_time > repl::Millis(GRIP_WAIT_MILLIS)) {
+        mState.joints.at(noJoints - 1).type = JOINTSTATETYPE_IDLE;
+    } else {
+        mState.joints.at(noJoints - 1).type = JOINTSTATETYPE_ACTIVE;
+    }
     mState.header.timestamp = system_clock::now();
     return mState;
 }
