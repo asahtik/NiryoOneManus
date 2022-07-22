@@ -17,7 +17,6 @@ void rwCtrlLoop(std::shared_ptr<NiryoOneManusInterface> i) {
     repl::Rate r(100);
     double last_pos[6];
     repl::Time erridle_times[6] {repl::time_now()};
-    bool erridle_set = false;
     while (!shuttingDown) {
         i->read();
         auto now = repl::time_now();
@@ -146,7 +145,7 @@ ManipulatorState NiryoOneManipulator::state() {
     if (repl::time_now() - grip_time > repl::Millis(GRIP_WAIT_MILLIS)) {
         mState.joints.at(noJoints - 1).type = JOINTSTATETYPE_IDLE;
     } else {
-        mState.joints.at(noJoints - 1).type = JOINTSTATETYPE_ACTIVE;
+        mState.joints.at(noJoints - 1).type = JOINTSTATETYPE_MOVING;
     }
     mState.header.timestamp = system_clock::now();
     return mState;
