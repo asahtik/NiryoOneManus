@@ -1,5 +1,12 @@
 name: "Niryo One Manus"
 version: 1.0
+frame:
+  tx: 0
+  ty: 0
+  tz: 0
+  rr: 0
+  rp: 0
+  ry: 0
 joints:
   - type: "fixed"
     transform:
