@@ -7,6 +7,7 @@
 #define MAX_GOAL_DISTANCE 0.02
 #define EQ_POSITION_THRESHOLD 0.001
 #define IDLE_ERROR_WAIT_MILLIS 500
+#define NUM_OF_JOINTS 6
 
 std::string MODEL_PATH;
 
@@ -15,12 +16,12 @@ volatile bool calibrated = false;
 
 void rwCtrlLoop(std::shared_ptr<NiryoOneManusInterface> i) {
     repl::Rate r(100);
-    double last_pos[6];
-    repl::Time erridle_times[6] {repl::time_now()};
+    double last_pos[NUM_OF_JOINTS];
+    repl::Time erridle_times[NUM_OF_JOINTS] {repl::time_now()};
     while (!shuttingDown) {
         i->read();
         auto now = repl::time_now();
-        for (int j = 0; j < 6; j++) {
+        for (unsigned int j = 0; j < NUM_OF_JOINTS; ++j) {
             if (std::abs(i->cmd[j] - i->pos[j]) <= MAX_GOAL_DISTANCE) {
                 i->state[j] = JointMotorState::IDLE;
                 erridle_times[j] = now;
@@ -40,6 +41,9 @@ void rwCtrlLoop(std::shared_ptr<NiryoOneManusInterface> i) {
         if (calibrated) {   
             i->write();
         } else if (calibrationRequested) {
+            for (unsigned int j = 0; j < NUM_OF_JOINTS; ++j) {
+                i->state[j] = JointMotorState::ERROR;
+            }
             i->calibrate();
             i->openGripper(1.0);
             repl::sleep(2);
