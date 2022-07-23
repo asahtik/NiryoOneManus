@@ -147,7 +147,7 @@ int main(int argc, char** argv) {
         TrajectorySegment pick_up;
         pick_up.frame.origin.x = std::get<0>(points[goal]);
         pick_up.frame.origin.y = std::get<1>(points[goal]);
-        pick_up.frame.origin.z = 50.0;
+        pick_up.frame.origin.z = 5.0;
         pick_up.frame.rotation.x = 0.0;
         pick_up.frame.rotation.y = PICKUP_Y_ANGLE;
         pick_up.frame.rotation.z = 0.0;
