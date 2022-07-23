@@ -3,7 +3,7 @@ version: 1.0
 frame:
   tx: -245
   ty: 0
-  tz: -18
+  tz: -15
   rr: 0
   rp: 0
   ry: 0
@@ -87,6 +87,14 @@ joints:
       tz: 7.3
       rr: -90
       rp: -90
+      ry: 0
+  - type: "fixed" # tool
+    transform:
+      tx: 80
+      ty: 0
+      tz: 0
+      rr: 0
+      rp: 0
       ry: 0
   - type: "gripper"
     axis: "none"
