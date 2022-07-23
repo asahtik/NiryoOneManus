@@ -156,7 +156,7 @@ ManipulatorState NiryoOneManipulator::state() {
 }
 
 void NiryoOneManipulator::prepareNewGoal(bool begin_trajectory = false) {
-    mi->syncNextGoal(true);
+    mi->syncNextGoal(begin_trajectory);
 }
 
 void shutdown(bool shutdownSystem) {

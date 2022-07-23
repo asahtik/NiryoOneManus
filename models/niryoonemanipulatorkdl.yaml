@@ -1,9 +1,9 @@
 name: "Niryo One Manus"
 version: 1.0
 frame:
-  tx: 0
+  tx: -245
   ty: 0
-  tz: 0
+  tz: -18
   rr: 0
   rp: 0
   ry: 0
