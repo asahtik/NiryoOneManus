@@ -27,7 +27,8 @@ void rwCtrlLoop(std::shared_ptr<NiryoOneManusInterface> i) {
                 erridle_times[j] = now;
             } else if (std::abs(last_pos[j] - i->pos[j]) <= EQ_POSITION_THRESHOLD) {
                 if (now - erridle_times[j] > repl::Millis(IDLE_ERROR_WAIT_MILLIS)) {
-                    i->state[j] = JointMotorState::ERROR;
+                    // i->state[j] = JointMotorState::ERROR;
+                    i->state[j] = JointMotorState::IDLE;
                 } else {
                     i->state[j] = JointMotorState::MOVING;
                 }
