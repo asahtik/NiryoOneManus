@@ -11,7 +11,7 @@
 #define TARGET_WAIT 5
 
 #define HOVER_HEIGHT 100
-#define PICKUP_Y_ANGLE -1.0
+#define PICKUP_Y_ANGLE -1.57
 
 using namespace echolib;
 using namespace manus::messages;
@@ -190,6 +190,14 @@ int main(int argc, char** argv) {
             this_thread::sleep_for(chrono::milliseconds(1000));
             ++wait_cnt;
         }
+
+        Trajectory back_to_hover;
+        back_to_hover.identifier = "trajectory" + to_string(trajectory++);
+        back_to_hover.speed = 1.0;
+        back_to_hover.segments.push_back(hover);
+        manager->trajectory_publisher->send(back_to_hover);
+
+        while (!manager->is_idle()) this_thread::sleep_for(chrono::milliseconds(500));
 
         cout << "\rMoving home" << endl;
         PlanSegment home = manager->state_to_segment();
