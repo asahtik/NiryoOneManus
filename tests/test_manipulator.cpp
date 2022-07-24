@@ -60,6 +60,9 @@ public:
         for (auto j : state.joints) {
             if (j.type != JointStateType::JOINTSTATETYPE_IDLE) return false;
         }
+        for (auto i = 0u; i < state.joints.size(); ++i) {
+            cout << "Joint " << i << ": position - " << state.joints[i].position << ", goal - " << state.joints[i].goal << endl;
+        }
         return true;
     }
 };
