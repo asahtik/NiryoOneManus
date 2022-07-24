@@ -7,8 +7,8 @@
 #include <manus/messages.h>
 
 #define GRIP_WAIT 5
-#define GRIP_CLEAR_WAIT 5
-#define TARGET_WAIT 2
+#define MOVE_WAIT 5
+#define TARGET_WAIT 5
 
 #define HOVER_HEIGHT 100
 #define PICKUP_Y_ANGLE -1.0
@@ -98,36 +98,39 @@ int main(int argc, char** argv) {
     });
     unsigned int plan = 0;
     unsigned int trajectory = 0;
+    unsigned int gripped = 1;
     while (true) {
         while (!manager->is_idle())
             this_thread::sleep_for(chrono::milliseconds(500));
         cout << "Input goal number: " << endl;
         unsigned int goal = 0;
         cin >> goal;
-        if (goal >= points.size()) {
+        if (goal > points.size()) {
             cout << "Invalid goal number." << endl;
             continue;
+        } else if (goal == 0) {
+            int wait = 0;
+            while (wait <= GRIP_WAIT) {
+                cout << "\rTime until " << gripped ? "release" : "grip" << ": " << GRIP_WAIT - wait << flush;
+                this_thread::sleep_for(chrono::milliseconds(1000));
+                ++wait;
+            }
+            cout << "\r" << gripped ? "Releasing" : "Gripping" << endl;
+            PlanSegment grip = manager->state_to_segment();
+            grip.joints.at(grip.joints.size() - 1).goal = gripped;
+            grip.joints.at(grip.joints.size() - 1).speed = 1.0;
+            Plan grip_plan;
+            grip_plan.identifier = "plan" + to_string(plan++);
+            grip_plan.segments.push_back(grip);
+            manager->plan_publisher->send(grip_plan);
+            gripped = !gripped;
+            continue;
         }
-        int wait = 0;
-        while (wait <= GRIP_WAIT) {
-            cout << "\rTime until grip: " << GRIP_WAIT - wait << flush;
-            this_thread::sleep_for(chrono::milliseconds(1000));
-            ++wait;
-        }
-        cout << "\rGripping" << endl;
-        PlanSegment grip = manager->state_to_segment();
-        grip.joints.at(grip.joints.size() - 1).goal = 0.0;
-        grip.joints.at(grip.joints.size() - 1).speed = 1.0;
-        Plan grip_plan;
-        grip_plan.identifier = "plan" + to_string(plan++);
-        grip_plan.segments.push_back(grip);
-        manager->plan_publisher->send(grip_plan);
-
-        while (!manager->is_idle()) this_thread::sleep_for(chrono::milliseconds(500));
+        --goal;
 
         wait = 0;
-        while (wait <= GRIP_CLEAR_WAIT) {
-            cout << "\rTime until move: " << GRIP_CLEAR_WAIT - wait << flush;
+        while (wait <= MOVE_WAIT) {
+            cout << "\rTime until move: " << MOVE_WAIT - wait << flush;
             this_thread::sleep_for(chrono::milliseconds(1000));
             ++wait;
         }
@@ -181,24 +184,6 @@ int main(int argc, char** argv) {
         home_plan.identifier = "plan" + to_string(plan++);
         home_plan.segments.push_back(home);
         manager->plan_publisher->send(home_plan);
-
-        while (!manager->is_idle()) this_thread::sleep_for(chrono::milliseconds(500));
-
-        wait = 0;
-        while (wait <= GRIP_WAIT) {
-            cout << "\rReleasing in: " << GRIP_WAIT - wait << flush;
-            this_thread::sleep_for(chrono::milliseconds(1000));
-            ++wait;
-        }
-
-        cout << "\rReleasing" << endl;
-        PlanSegment release = manager->state_to_segment();
-        release.joints.at(release.joints.size() - 1).goal = 1.0;
-        release.joints.at(release.joints.size() - 1).speed = 1.0;
-        Plan release_plan;
-        release_plan.identifier = "plan" + to_string(plan++);
-        release_plan.segments.push_back(release);
-        manager->plan_publisher->send(release_plan);
     }
     handler.join();
 }
