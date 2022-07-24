@@ -192,8 +192,15 @@ int main(int argc, char** argv) {
         Trajectory back_to_hover;
         back_to_hover.identifier = "trajectory" + to_string(trajectory++);
         back_to_hover.speed = 1.0;
+        hover.gripper = 1.0;
         back_to_hover.segments.push_back(hover);
         manager->trajectory_publisher->send(back_to_hover);
+
+        wait_cnt = 0;
+        while (wait_cnt <= MOVE_WAIT) {
+            this_thread::sleep_for(chrono::milliseconds(1000));
+            ++wait_cnt;
+        }
 
         while (!manager->is_idle()) this_thread::sleep_for(chrono::milliseconds(500));
 
@@ -207,6 +214,7 @@ int main(int argc, char** argv) {
         home_plan.identifier = "plan" + to_string(plan++);
         home_plan.segments.push_back(home);
         manager->plan_publisher->send(home_plan);
+        gripped = true;
     }
     handler.join();
 }
