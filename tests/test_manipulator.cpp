@@ -102,6 +102,7 @@ int main(int argc, char** argv) {
     while (true) {
         while (!manager->is_idle())
             this_thread::sleep_for(chrono::milliseconds(500));
+        int wait_cnt = 0;
         cout << "Input goal number: " << endl;
         unsigned int goal = 0;
         cin >> goal;
@@ -109,13 +110,13 @@ int main(int argc, char** argv) {
             cout << "Invalid goal number." << endl;
             continue;
         } else if (goal == 0) {
-            int wait_cnt = 0;
+            wait_cnt = 0;
             while (wait_cnt <= GRIP_WAIT) {
                 cout << "\rTime until " << (gripped ? "release" : "grip") << ": " << GRIP_WAIT - wait_cnt << flush;
                 this_thread::sleep_for(chrono::milliseconds(1000));
                 ++wait_cnt;
             }
-            cout << "\r" << gripped ? ("Releasing" : "Gripping") << endl;
+            cout << "\r" << (gripped ? "Releasing" : "Gripping") << endl;
             PlanSegment grip = manager->state_to_segment();
             grip.joints.at(grip.joints.size() - 1).goal = gripped;
             grip.joints.at(grip.joints.size() - 1).speed = 1.0;
