@@ -109,13 +109,13 @@ int main(int argc, char** argv) {
             cout << "Invalid goal number." << endl;
             continue;
         } else if (goal == 0) {
-            int wait = 0;
-            while (wait <= GRIP_WAIT) {
-                cout << "\rTime until " << gripped ? "release" : "grip" << ": " << GRIP_WAIT - wait << flush;
+            int wait_cnt = 0;
+            while (wait_cnt <= GRIP_WAIT) {
+                cout << "\rTime until " << (gripped ? "release" : "grip") << ": " << GRIP_WAIT - wait_cnt << flush;
                 this_thread::sleep_for(chrono::milliseconds(1000));
-                ++wait;
+                ++wait_cnt;
             }
-            cout << "\r" << gripped ? "Releasing" : "Gripping" << endl;
+            cout << "\r" << gripped ? ("Releasing" : "Gripping") << endl;
             PlanSegment grip = manager->state_to_segment();
             grip.joints.at(grip.joints.size() - 1).goal = gripped;
             grip.joints.at(grip.joints.size() - 1).speed = 1.0;
@@ -128,11 +128,11 @@ int main(int argc, char** argv) {
         }
         --goal;
 
-        wait = 0;
-        while (wait <= MOVE_WAIT) {
-            cout << "\rTime until move: " << MOVE_WAIT - wait << flush;
+        wait_cnt = 0;
+        while (wait_cnt <= MOVE_WAIT) {
+            cout << "\rTime until move: " << MOVE_WAIT - wait_cnt << flush;
             this_thread::sleep_for(chrono::milliseconds(1000));
-            ++wait;
+            ++wait_cnt;
         }
 
         cout << "\rMoving to " << goal << endl;
@@ -167,11 +167,11 @@ int main(int argc, char** argv) {
 
         while (!manager->is_idle()) this_thread::sleep_for(chrono::milliseconds(500));
 
-        wait = 0;
-        while (wait <= TARGET_WAIT) {
-            cout << "\rMoving back in: " << TARGET_WAIT - wait << flush;
+        wait_cnt = 0;
+        while (wait_cnt <= TARGET_WAIT) {
+            cout << "\rMoving back in: " << TARGET_WAIT - wait_cnt << flush;
             this_thread::sleep_for(chrono::milliseconds(1000));
-            ++wait;
+            ++wait_cnt;
         }
 
         cout << "\rMoving home" << endl;
