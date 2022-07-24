@@ -92,7 +92,7 @@ joints:
     transform:
       tx: 80
       ty: 0
-      tz: 0
+      tz: -10
       rr: 0
       rp: 0
       ry: 0

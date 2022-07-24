@@ -169,6 +169,22 @@ int main(int argc, char** argv) {
         while (!manager->is_idle()) this_thread::sleep_for(chrono::milliseconds(500));
 
         wait_cnt = 0;
+        while (wait_cnt <= GRIP_WAIT) {
+            cout << "\rTime until release: " << GRIP_WAIT - wait_cnt << flush;
+            this_thread::sleep_for(chrono::milliseconds(1000));
+            ++wait_cnt;
+        }
+        cout << "\rReleasing" << endl;
+        PlanSegment grip = manager->state_to_segment();
+        grip.joints.at(grip.joints.size() - 1).goal = 1.0;
+        grip.joints.at(grip.joints.size() - 1).speed = 1.0;
+        Plan grip_plan;
+        grip_plan.identifier = "plan" + to_string(plan++);
+        grip_plan.segments.push_back(grip);
+        manager->plan_publisher->send(grip_plan);
+        gripped = false;
+
+        wait_cnt = 0;
         while (wait_cnt <= TARGET_WAIT) {
             cout << "\rMoving back in: " << TARGET_WAIT - wait_cnt << flush;
             this_thread::sleep_for(chrono::milliseconds(1000));
