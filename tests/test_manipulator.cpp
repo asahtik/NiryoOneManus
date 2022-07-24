@@ -147,7 +147,6 @@ int main(int argc, char** argv) {
         hover.rotation = true;
         hover.required = true;
         hover.speed = 1;
-        hover.gripper = 0.0;
         TrajectorySegment pick_up;
         pick_up.frame.origin.x = std::get<0>(points[goal]);
         pick_up.frame.origin.y = std::get<1>(points[goal]);
@@ -158,7 +157,6 @@ int main(int argc, char** argv) {
         pick_up.rotation = true;
         pick_up.required = true;
         pick_up.speed = 1;
-        pick_up.gripper = 0.0;
         Trajectory do_move;
         do_move.identifier = "trajectory" + to_string(trajectory++);
         do_move.speed = 1.0;
