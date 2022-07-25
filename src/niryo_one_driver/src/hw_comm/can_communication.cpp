@@ -999,6 +999,7 @@ void CanCommunication::getCurrentPositionV2(double *axis_1_pos, double *axis_2_p
     *axis_1_pos = steps_to_rad_pos(m1.getPositionState(), m1.getGearRatio(), m1.getDirection());
     *axis_2_pos = steps_to_rad_pos(m2.getPositionState(), m2.getGearRatio(), m2.getDirection());
     *axis_3_pos = steps_to_rad_pos(m3.getPositionState(), m3.getGearRatio(), m3.getDirection());
+    OUTPUT_INFO("Position command: %f, %f, %f; Position state: %f, %f, %f", m1.getPositionCommand(), m2.getPositionCommand(), m3.getPositionCommand(), m1.getPositionState(), m2.getPositionState(), m3.getPositionState());
 }
 
 void CanCommunication::setMicroSteps(std::vector<uint8_t> micro_steps_list)

@@ -14,11 +14,17 @@ std::string MODEL_PATH;
 volatile bool calibrationRequested = false;
 volatile bool calibrated = false;
 
+bool prepare_new_goal = false;
+
 void rwCtrlLoop(std::shared_ptr<NiryoOneManusInterface> i) {
     repl::Rate r(100);
     double last_pos[NUM_OF_JOINTS];
     repl::Time erridle_times[NUM_OF_JOINTS] {repl::time_now()};
     while (!shuttingDown) {
+        if (prepare_new_goal) {
+            i->syncNextGoal(true);
+            prepare_new_goal = false;
+        }
         i->read();
         auto now = repl::time_now();
         for (unsigned int j = 0; j < NUM_OF_JOINTS; ++j) {
@@ -187,6 +193,7 @@ void btnStateSwitchISR() {
         if ((now - last_pressed) > repl::Millis(5000)) {
             shutdown(true);
         } else if (noBtnPresses == 0) calibrationRequested = true;
+        else prepare_new_goal = true;
         ++noBtnPresses;
     }
     #endif
