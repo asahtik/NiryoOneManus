@@ -39,7 +39,7 @@ void rwCtrlLoop(std::shared_ptr<NiryoOneManusInterface> i) {
             last_pos[j] = i->pos[j];
         }
 
-        if (calibrated) {   
+        if (calibrated && !calibrationRequested) {   
             i->write();
         } else if (calibrationRequested) {
             for (unsigned int j = 0; j < NUM_OF_JOINTS; ++j) {
@@ -49,6 +49,7 @@ void rwCtrlLoop(std::shared_ptr<NiryoOneManusInterface> i) {
             i->openGripper(1.0);
             repl::sleep(2);
             calibrated = true;
+            calibrationRequested = false;
             change_led(false, true, false);
         }
         r.sleep();
