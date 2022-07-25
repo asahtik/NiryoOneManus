@@ -220,9 +220,7 @@ void setupSigint() {
     sigIntHandler.sa_handler = sigintSR;
     sigemptyset(&sigIntHandler.sa_mask);
     sigIntHandler.sa_flags = 0;
-    sigaction(SIGINT, &sigIntHandler, NULL);
-    sigaction(SIGSTOP, &sigIntHandler, NULL);
-    sigaction(SIGABRT, &sigIntHandler, NULL);
+    sigaction(15, &sigIntHandler, NULL);
 }
 
 bool torqueOn = true;
