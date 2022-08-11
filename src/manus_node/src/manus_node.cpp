@@ -52,7 +52,7 @@ void rwCtrlLoop(std::shared_ptr<NiryoOneManusInterface> i) {
             last_pos[j] = i->pos[j];
         }
 
-        if (calibrated && !calibrationRequested && do_command && !moving) {  
+        if (calibrated && !calibrationRequested && do_command && !moving) {
             do_command = false; 
             i->write();
         } else if (calibrationRequested) {
@@ -73,9 +73,9 @@ void rwCtrlLoop(std::shared_ptr<NiryoOneManusInterface> i) {
             }
             do_command = true;
             last_cmd_time = now
-        } else if (err_stop) {
+        } else if (err_stop && !moving) {
             i->syncNextGoal(true);
-        } else if (at_goal) {
+        } else if (at_goal && !moving) {
             i->syncNextGoal(false);
         }
 
