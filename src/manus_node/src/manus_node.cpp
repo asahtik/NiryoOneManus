@@ -7,6 +7,7 @@
 #define MAX_GOAL_DISTANCE 0.02
 #define EQ_POSITION_THRESHOLD 0.001
 #define IDLE_ERROR_WAIT_MILLIS 500
+#define TRAJECTORY_CMD_MAX_INTERVAL_MILLIS 100
 #define NUM_OF_JOINTS 6
 
 std::string MODEL_PATH;
@@ -15,32 +16,44 @@ volatile bool calibrationRequested = false;
 volatile bool calibrated = false;
 
 void rwCtrlLoop(std::shared_ptr<NiryoOneManusInterface> i) {
-    repl::Rate r(100);
+    repl::Rate r(10);
+    double last_cmd[NUM_OF_JOINTS];
     double last_pos[NUM_OF_JOINTS];
+    bool do_command = false;
+    repl::Time last_cmd_time = repl::Time::now();
     repl::Time erridle_times[NUM_OF_JOINTS] {repl::time_now()};
     while (!shuttingDown) {
         i->read();
-        // TODO: Synchronise
+        bool at_goal = true;
+        bool new_cmd = false;
+        bool moving = false;
+        bool err_stop = false;
         auto now = repl::time_now();
         for (unsigned int j = 0; j < NUM_OF_JOINTS; ++j) {
+            at_goal &= std::abs(i->cmd[j] - i->pos[j]) <= MAX_GOAL_DISTANCE;
+            new_cmd |= std::abs(i->cmd[j] - last_cmd[j]) > EQ_POSITION_THRESHOLD;
             if (std::abs(i->cmd[j] - i->pos[j]) <= MAX_GOAL_DISTANCE) {
                 i->state[j] = JointMotorState::IDLE;
                 erridle_times[j] = now;
             } else if (std::abs(last_pos[j] - i->pos[j]) <= EQ_POSITION_THRESHOLD) {
                 if (now - erridle_times[j] > repl::Millis(IDLE_ERROR_WAIT_MILLIS)) {
                     // i->state[j] = JointMotorState::ERROR;
+                    err_stop = true;
                     i->state[j] = JointMotorState::IDLE;
                 } else {
                     i->state[j] = JointMotorState::MOVING;
+                    moving = true;
                 }
             } else {
                 i->state[j] = JointMotorState::MOVING;
+                moving = true;
                 erridle_times[j] = now;
             }
             last_pos[j] = i->pos[j];
         }
 
-        if (calibrated && !calibrationRequested) {   
+        if (calibrated && !calibrationRequested && do_command && !moving) {  
+            do_command = false; 
             i->write();
         } else if (calibrationRequested) {
             for (unsigned int j = 0; j < NUM_OF_JOINTS; ++j) {
@@ -53,6 +66,19 @@ void rwCtrlLoop(std::shared_ptr<NiryoOneManusInterface> i) {
             calibrationRequested = false;
             change_led(false, true, false);
         }
+
+        if (new_cmd) {
+            if (now - last_cmd_time > repl::Millis(TRAJECTORY_CMD_MAX_INTERVAL_MILLIS)) {
+                i->syncNextGoal(true);
+            }
+            do_command = true;
+            last_cmd_time = now
+        } else if (err_stop) {
+            i->syncNextGoal(true);
+        } else if (at_goal) {
+            i->syncNextGoal(false);
+        }
+
         r.sleep();
     }
 }
