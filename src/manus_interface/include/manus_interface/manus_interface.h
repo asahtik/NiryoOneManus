@@ -15,6 +15,7 @@ public:
     void openGripper(double position);
 
     // Call before setting new goal
+    // If false add to next goal, else move
     void syncNextGoal(bool beginTrajectory);
     void calibrate();
 
