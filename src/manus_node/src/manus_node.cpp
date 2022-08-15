@@ -20,7 +20,7 @@ void rwCtrlLoop(std::shared_ptr<NiryoOneManusInterface> i) {
     double last_cmd[NUM_OF_JOINTS];
     double last_pos[NUM_OF_JOINTS];
     bool do_command = false;
-    repl::Time last_cmd_time = repl::Time::now();
+    repl::Time last_goal_time = repl::time_now();
     repl::Time erridle_times[NUM_OF_JOINTS] {repl::time_now()};
     while (!shuttingDown) {
         i->read();
@@ -68,15 +68,15 @@ void rwCtrlLoop(std::shared_ptr<NiryoOneManusInterface> i) {
         }
 
         if (new_cmd) {
-            if (now - last_cmd_time > repl::Millis(TRAJECTORY_CMD_MAX_INTERVAL_MILLIS)) {
+            if (now - last_goal_time > repl::Millis(TRAJECTORY_CMD_MAX_INTERVAL_MILLIS)) {
                 i->syncNextGoal(true);
             }
             do_command = true;
-            last_cmd_time = now
         } else if (err_stop && !moving) {
             i->syncNextGoal(true);
         } else if (at_goal && !moving) {
             i->syncNextGoal(false);
+            last_goal_time = now;
         }
 
         r.sleep();
